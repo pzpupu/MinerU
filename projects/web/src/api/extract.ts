@@ -186,6 +186,7 @@ export const updateMarkdownContent = async (
   return axios
     .put<UpdateMarkdownResponse>("/api/v2/extract/markdown", params)
     .then((res) => {
+      console.log("/api/v2/extract/markdown:",res)
       if (!res?.data?.error) {
         return res.data.data;
       } else {

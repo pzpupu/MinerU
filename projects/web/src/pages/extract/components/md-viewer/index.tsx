@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Tooltip } from "antd";
+import { message, Tooltip } from "antd";
 
 import cls from "classnames";
 import styles from "./index.module.scss";
@@ -50,6 +50,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     setMdUrlArr,
     mdContents,
     updateMdContent,
+    addHighlight,
   } = useMdStore();
   const [lineWrap, setLineWrap] = useState(false);
 
@@ -146,6 +147,57 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     statusRef?.current?.triggerSave();
     if (taskInfo?.file_key) {
       updateMdContent(taskInfo.file_key!, index, val);
+    }
+  };
+
+  // 处理文本高亮
+  const handleHighlight = (text: string, range: { start: number; end: number }, color: string) => {
+    if (taskInfo?.file_key) {
+      statusRef?.current?.triggerSave();
+      // addHighlight(taskInfo.file_key, curPage - 1, text, range, color);
+      const pageIndex = curPage - 1;
+      const urls = Object.keys(mdContents);
+      const url = urls[pageIndex];
+      // 提示
+      if (pageIndex >= urls.length) {
+        message.info("Invalid page index");
+        throw new Error("Invalid page index");
+      }
+      const content = mdContents[url]?.content || "";
+       // 创建高亮标记，添加自定义类名以便于样式控制
+      const highlightedText = `<mark style="background-color:${color}; border-radius: 2px; padding: 0 2px;">${text}</mark>`;
+    // 查找精确的文本位置
+      // 如果提供的范围不准确，尝试在内容中查找文本
+      let startPos = range.start;
+      let endPos = range.end;
+
+      if (content.substring(startPos, endPos) !== text) {
+        // 尝试查找精确匹配
+        const exactPos = content.indexOf(text);
+        if (exactPos !== -1) {
+          startPos = exactPos;
+          endPos = exactPos + text.length;
+        } else {
+          // 如果找不到精确匹配，尝试模糊匹配
+          const fuzzyMatch = content.match(new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
+          if (fuzzyMatch && fuzzyMatch.index !== undefined) {
+            startPos = fuzzyMatch.index;
+            endPos = startPos + fuzzyMatch[0].length;
+            text = fuzzyMatch[0]; // 使用实际匹配的文本
+          }
+        }
+      }
+
+         // 替换文本
+      const newContent =
+        content.substring(0, startPos) +
+        highlightedText +
+        content.substring(endPos);
+
+      setAllMdContentWithAnchor(newContent);
+
+      // 更新内容
+      updateMdContent(taskInfo.file_key, pageIndex, newContent);
     }
   };
 
@@ -250,6 +302,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
           <LazyUrlMarkdown
             markdownClass={"relative"}
             content={allMdContentWithAnchor}
+            onHighlight={handleHighlight}
           />
         </div>
         <div
