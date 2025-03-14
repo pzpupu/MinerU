@@ -97,7 +97,7 @@ def analysis_pdf_task(pdf_dir, image_dir, pdf_path, is_ocr, analysis_pdf_id):
             pdf_bytes = file.read()
         # 生成图片链接
         with app.app_context():
-            image_url_prefix = f"http://{current_app.config['SERVER_NAME']}{current_app.config['FILE_API']}&pdf={Path(pdf_path).name}&filename="
+            image_url_prefix = f"{current_app.config['FILE_API']}&pdf={Path(pdf_path).name}&filename="
         # 解析文件
         md_content, bbox_info = analysis_pdf(image_url_prefix, image_dir, pdf_bytes, is_ocr)
 
@@ -112,7 +112,7 @@ def analysis_pdf_task(pdf_dir, image_dir, pdf_path, is_ocr, analysis_pdf_id):
         with open(f'{pdf_dir}/{full_md_name}', 'w', encoding='utf-8') as file:
             file.write(full_md_content)
         with app.app_context():
-            full_md_link = url_for('analysis.mdview', filename=full_md_name, as_attachment=False)
+            full_md_link = url_for('analysis.mdview', filename=full_md_name, as_attachment=False, _external=False)
             full_md_link = f'{full_md_link}&pdf={pdf_name}'
 
         md_link_list = []
@@ -122,7 +122,7 @@ def analysis_pdf_task(pdf_dir, image_dir, pdf_path, is_ocr, analysis_pdf_id):
                 md_name = f"{md.get('page_no', n)}.md"
                 with open(f'{pdf_dir}/{md_name}', 'w', encoding='utf-8') as file:
                     file.write(md_content)
-                md_url = url_for('analysis.mdview', filename=md_name, as_attachment=False)
+                md_url = url_for('analysis.mdview', filename=md_name, as_attachment=False, _external=False)
                 md_link_list.append(f'{md_url}&pdf={pdf_name}')
 
         with app.app_context():
