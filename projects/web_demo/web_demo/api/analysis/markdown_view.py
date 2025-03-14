@@ -41,4 +41,4 @@ class MarkdownView(Resource):
                 f.write(full_content)
         else:
             return generate_response(code=400, msg="Invalid file_key", msgZH="文件哈希错误")
-        return generate_response()
+        return generate_response(data={"success": True}, msg="success", msgZH="更新成功")

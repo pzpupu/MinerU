@@ -50,7 +50,6 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     setMdUrlArr,
     mdContents,
     updateMdContent,
-    addHighlight,
   } = useMdStore();
   const [lineWrap, setLineWrap] = useState(false);
 
@@ -194,12 +193,14 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         highlightedText +
         content.substring(endPos);
 
-      setAllMdContentWithAnchor(newContent);
+      // setAllMdContentWithAnchor(newContent);
 
       // 更新内容
       updateMdContent(taskInfo.file_key, pageIndex, newContent);
     }
   };
+
+  console.log('md-viewer=> ', {curPage});
 
   return (
     <div className={cls(className)} ref={mdViewerPef}>

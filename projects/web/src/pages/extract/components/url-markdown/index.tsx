@@ -131,7 +131,7 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
     setHighlightMenuStyle(prev => ({ ...prev, display: 'none' }));
   };
 
-  console.log('LazyUrlMarkdown=> ', {allMdContentWithAnchor: content});
+  // console.log('LazyUrlMarkdown=> ', {allMdContentWithAnchor: content});
 
   return (
     <div ref={ref} className="min-h-[100px]">
