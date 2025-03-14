@@ -1,4 +1,5 @@
 import json
+import os
 import threading
 from multiprocessing import Process
 from pathlib import Path
@@ -117,7 +118,8 @@ class AnalysisTaskView(Resource):
         is_ocr = params.get("isOcr", False)
 
         pdf_upload_folder = current_app.config['PDF_UPLOAD_FOLDER']
-        upload_dir = f"{current_app.static_folder}/{pdf_upload_folder}"
+        relative_static_folder = os.path.relpath(current_app.static_folder)
+        upload_dir = f"{relative_static_folder}/{pdf_upload_folder}"
         file_path = find_file(file_key, upload_dir)
         match task_type:
             case 'pdf':
