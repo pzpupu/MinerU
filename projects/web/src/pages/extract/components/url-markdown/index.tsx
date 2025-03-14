@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import styles from "./index.module.scss";
 import { useEffect, useRef, useState } from "react";
 import cls from "classnames";
+import { message, notification } from "antd";
 
 // 定义高亮颜色选项
 const HIGHLIGHT_COLORS = [
@@ -126,6 +127,13 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
           start: startPos,
           end: startPos + selectionText.length
         }, color);
+      }else{
+        // 如果选中的文本不在内容中，中下位置提示给用户
+        notification.warning({
+          message: "暂不支持跨段落高亮",
+          placement: "bottomRight",
+          showProgress: true,
+        });
       }
     }
     setHighlightMenuStyle(prev => ({ ...prev, display: 'none' }));

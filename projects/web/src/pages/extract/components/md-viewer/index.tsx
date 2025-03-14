@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { message, Tooltip } from "antd";
+import { message, notification, Tooltip } from "antd";
 
 import cls from "classnames";
 import styles from "./index.module.scss";
@@ -193,14 +193,31 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         highlightedText +
         content.substring(endPos);
 
+      console.log('handleHighlight=> ', highlightedText);
+
       // setAllMdContentWithAnchor(newContent);
 
       // 更新内容
-      updateMdContent(taskInfo.file_key, pageIndex, newContent);
+      updateMdContent(taskInfo.file_key, pageIndex, newContent)
+      .then(() => {
+        notification.success({
+          message: "高亮成功",
+          placement: "bottomRight",
+          showProgress: true,
+        });
+      })
+      .catch((err) => {
+        notification.error({
+          message: "高亮失败",
+          description: err.message,
+          placement: "bottomRight",
+          showProgress: true,
+        });
+      })
     }
   };
 
-  console.log('md-viewer=> ', {curPage});
+  // console.log('md-viewer=> ', {curPage});
 
   return (
     <div className={cls(className)} ref={mdViewerPef}>

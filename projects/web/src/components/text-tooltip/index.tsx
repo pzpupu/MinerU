@@ -53,7 +53,7 @@ export const TextTooltip = (props: ITextTooltip) => {
     <Tooltip
       title={<div className="bg-black/[0.85] text-white p-[6px]">{str}</div>}
       trigger={clickable ? trigger : ('' as 'click')}
-      overlayClassName={styles.textTooltip}
+      classNames={{root: styles.textTooltip}}
       style={{ width: '100%' }}
       zIndex={999999}
       placement="right"
