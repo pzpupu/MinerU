@@ -164,7 +164,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
       }
       const content = mdContents[url]?.content || "";
        // 创建高亮标记，添加自定义类名以便于样式控制
-      const highlightedText = `<mark style="background-color:${color}; border-radius: 2px; padding: 0 2px;">${text}</mark>`;
+      const highlightedText = `<mark style="background-color:${color}; border-radius: 2px;">${text}</mark>`;
     // 查找精确的文本位置
       // 如果提供的范围不准确，尝试在内容中查找文本
       let startPos = range.start;
@@ -195,7 +195,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
 
       console.log('handleHighlight=> ', highlightedText);
 
-      // setAllMdContentWithAnchor(newContent);
+      setAllMdContentWithAnchor(newContent);
 
       // 更新内容
       updateMdContent(taskInfo.file_key, pageIndex, newContent)
