@@ -115,18 +115,18 @@ const PDFViewer = ({
     };
   }, []);
 
-  useEffect(() => {
-    const handlePageChange = ({ detail }: CustomEvent) => {
-      sendMessageToIframe("setPage", detail + 1);
-    };
-    document.addEventListener(MD_DRIVE_PDF, handlePageChange as EventListener);
-    return () => {
-      document.removeEventListener(
-        MD_DRIVE_PDF,
-        handlePageChange as EventListener
-      );
-    };
-  }, []);
+  // useEffect(() => {
+  //   const handlePageChange = ({ detail }: CustomEvent) => {
+  //     sendMessageToIframe("setPage", detail + 1);
+  //   };
+  //   document.addEventListener(MD_DRIVE_PDF, handlePageChange as EventListener);
+  //   return () => {
+  //     document.removeEventListener(
+  //       MD_DRIVE_PDF,
+  //       handlePageChange as EventListener
+  //     );
+  //   };
+  // }, []);
 
   return (
     <>

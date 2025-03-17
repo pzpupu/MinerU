@@ -88,14 +88,14 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (isHovering) return;
-    pushMdViewerScroll();
-  }, [curPage, isHovering]);
+  // useEffect(() => {
+  //   if (isHovering) return;
+  //   pushMdViewerScroll();
+  // }, [curPage, isHovering]);
 
-  useEffect(() => {
-    pushMdViewerScroll("instant");
-  }, [displayType]);
+  // useEffect(() => {
+  //   pushMdViewerScroll("instant");
+  // }, [displayType]);
 
   useEffect(() => {
     if (!isHovering) return;
