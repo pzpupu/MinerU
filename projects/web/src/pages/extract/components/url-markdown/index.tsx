@@ -7,15 +7,13 @@ import remarkGfm from "remark-gfm";
 import styles from "./index.module.scss";
 import { useEffect, useRef, useState } from "react";
 import cls from "classnames";
-import { message, notification } from "antd";
+import { notification } from "antd";
 
 // 定义高亮颜色选项
 const HIGHLIGHT_COLORS = [
-  { color: "#FFEB3B", bgColor: "#FFEB3B33", name: "黄色" },
-  { color: "#4CAF50", bgColor: "#4CAF5033", name: "绿色" },
-  { color: "#2196F3", bgColor: "#2196F333", name: "蓝色" },
-  { color: "#F44336", bgColor: "#F4433633", name: "红色" },
-  { color: "#9C27B0", bgColor: "#9C27B033", name: "紫色" },
+  { color: "#F44336", bgColor: "#F4433633", name: "题目" },
+  { color: "#4CAF50", bgColor: "#4CAF5033", name: "解析" },
+  { color: "#2196F3", bgColor: "#2196F333", name: "答案" },
 ];
 
 interface IMarkdownProps {
@@ -182,21 +180,17 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
           className={styles.highlightMenu}
           style={highlightMenuStyle}
         >
-          <div className="flex flex-col p-3 bg-white rounded-lg shadow-lg">
-            <div className="text-xs font-medium text-gray-600 mb-2 text-center">选择高亮颜色</div>
-            <div className="flex space-x-4 justify-center">
-              {HIGHLIGHT_COLORS.map((item) => (
-                <div
-                  key={item.name}
-                  className="w-8 h-8 rounded-full cursor-pointer flex items-center justify-center hover:opacity-80 transition-all duration-200 transform hover:scale-110"
-                  style={{ backgroundColor: item.bgColor, border: `2px solid ${item.color}` }}
-                  onClick={() => handleHighlight(item.color)}
-                  title={item.name}
-                >
-                  <span style={{ color: item.color, fontSize: '16px', fontWeight: 'bold' }}>✓</span>
-                </div>
-              ))}
-            </div>
+          <div className="flex p-2 bg-white rounded-lg shadow-lg">
+            {HIGHLIGHT_COLORS.map((item) => (
+              <div
+                key={item.name}
+                className="mx-1 px-2 py-1 rounded cursor-pointer hover:opacity-80 transition-all duration-200 flex items-center"
+                style={{ backgroundColor: item.bgColor, border: `1px solid ${item.color}` }}
+                onClick={() => handleHighlight(item.color)}
+              >
+                <span style={{ color: item.color, fontWeight: 'bold' }}>{item.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
