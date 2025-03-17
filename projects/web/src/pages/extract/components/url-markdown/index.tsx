@@ -186,7 +186,7 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
                 key={item.name}
                 className="mx-1 px-2 py-1 rounded cursor-pointer hover:opacity-80 transition-all duration-200 flex items-center"
                 style={{ backgroundColor: item.bgColor, border: `1px solid ${item.color}` }}
-                onClick={() => handleHighlight(item.color)}
+                onClick={() => handleHighlight(item.bgColor)}
               >
                 <span style={{ color: item.color, fontWeight: 'bold' }}>{item.name}</span>
               </div>
