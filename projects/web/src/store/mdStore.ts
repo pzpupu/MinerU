@@ -3,7 +3,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { updateMarkdownContent, UpdateMarkdownRequest } from "@/api/extract"; // 确保路径正确
 import { devtools } from 'zustand/middleware'
-interface MdContent {
+export interface MdContent {
   content: string;
   isLoading: boolean;
 }

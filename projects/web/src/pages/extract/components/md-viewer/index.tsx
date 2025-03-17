@@ -39,8 +39,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
 }) => {
   const mdViewerPef = useRef<HTMLDivElement>(null);
   const url = taskInfo?.fullMdLink || "";
-  const containerRef = useRef<HTMLDivElement>(null);
-  const isHovering = useHover(containerRef);
+  // const containerRef = useRef<HTMLDivElement>(null);
+  // const isHovering = useHover(containerRef);
   const { formatMessage } = useIntl();
   const [displayType, setDisplayType] = useState(MD_PREVIEW_TYPE.preview);
   const params = useParams();
@@ -97,42 +97,42 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   //   pushMdViewerScroll("instant");
   // }, [displayType]);
 
-  useEffect(() => {
-    if (!isHovering) return;
-    const handleScroll = () => {
-      if (!containerRef.current) return;
+  // useEffect(() => {
+  //   if (!isHovering) return;
+  //   const handleScroll = () => {
+  //     if (!containerRef.current) return;
 
-      taskInfo?.markdownUrl?.forEach((page, index) => {
-        const element =
-          displayType === MD_PREVIEW_TYPE.preview
-            ? document.getElementById(`md-anchor-${index}`)?.parentElement
-            : document.getElementById(`code-${index}`);
+  //     taskInfo?.markdownUrl?.forEach((page, index) => {
+  //       const element =
+  //         displayType === MD_PREVIEW_TYPE.preview
+  //           ? document.getElementById(`md-anchor-${index}`)?.parentElement
+  //           : document.getElementById(`code-${index}`);
 
-        if (element) {
-          const rect = element.getBoundingClientRect();
+  //       if (element) {
+  //         const rect = element.getBoundingClientRect();
 
-          if (rect.top <= threshold) {
-            document.dispatchEvent(
-              new CustomEvent(MD_DRIVE_PDF, {
-                detail: index,
-              })
-            );
-          }
-        }
-      });
-    };
+  //         if (rect.top <= threshold) {
+  //           document.dispatchEvent(
+  //             new CustomEvent(MD_DRIVE_PDF, {
+  //               detail: index,
+  //             })
+  //           );
+  //         }
+  //       }
+  //     });
+  //   };
 
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-    }
+  //   const container = containerRef.current;
+  //   if (container) {
+  //     container.addEventListener("scroll", handleScroll);
+  //   }
 
-    return () => {
-      if (container) {
-        container?.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [taskInfo, isHovering, displayType]);
+  //   return () => {
+  //     if (container) {
+  //       container?.removeEventListener("scroll", handleScroll);
+  //     }
+  //   };
+  // }, [taskInfo, isHovering, displayType]);
 
   useDeepCompareEffect(() => {
     if (taskInfo?.markdownUrl) {
@@ -284,7 +284,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
           styles.scrollBar
         )}
         id="md-container"
-        ref={containerRef}
+        // ref={containerRef}
       >
         <div
           className={cls(
@@ -293,7 +293,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         >
           <LazyUrlMarkdown
             markdownClass={"relative"}
-            content={allMdContent}
+            content={mdContents}
             onMark={handleMark}
           />
         </div>
