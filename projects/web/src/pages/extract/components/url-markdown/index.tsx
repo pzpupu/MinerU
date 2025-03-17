@@ -7,10 +7,9 @@ import remarkGfm from "remark-gfm";
 import styles from "./index.module.scss";
 import { useEffect, useRef, useState } from "react";
 import cls from "classnames";
-import { notification } from "antd";
 
-// 定义高亮颜色选项
-const HIGHLIGHT_COLORS = [
+// 定义标记颜色选项
+const MARK_COLORS = [
   { color: "#F44336", bgColor: "#F4433633", name: "题目" },
   { color: "#4CAF50", bgColor: "#4CAF5033", name: "解析" },
   { color: "#2196F3", bgColor: "#2196F333", name: "答案" },
@@ -20,11 +19,11 @@ interface IMarkdownProps {
   content?: string;
   markdownClass?: string;
   markdownId?: string;
-  onHighlight?: (text: string, range: { start: number; end: number }, color: string) => void;
+  onMark?: (color: string) => void;
 }
 
 // 定义高亮菜单样式类型
-interface HighlightMenuStyle {
+interface MarkMenuStyle {
   position: 'fixed' | 'absolute' | 'relative';
   top: string;
   left: string;
@@ -35,7 +34,7 @@ interface HighlightMenuStyle {
 const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
   content,
   markdownClass = "",
-  onHighlight,
+  onMark: onMark,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const [selection, setSelection] = useState<{
@@ -48,7 +47,7 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
     position: null,
   });
 
-  const [highlightMenuStyle, setHighlightMenuStyle] = useState<HighlightMenuStyle>({
+  const [markMenuStyle, setMarkMenuStyle] = useState<MarkMenuStyle>({
     position: 'fixed',
     top: '0px',
     left: '0px',
@@ -61,13 +60,13 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
     const handleSelection = () => {
       const selection = window.getSelection();
       if (!selection || selection.isCollapsed || !ref.current) {
-        setHighlightMenuStyle(prev => ({ ...prev, display: 'none' }));
+        setMarkMenuStyle(prev => ({ ...prev, display: 'none' }));
         return;
       }
 
       const range = selection.getRangeAt(0);
       const selectedText = selection.toString().trim();
-
+      console.log('selectedText=> ', selectedText);
       if (selectedText && ref.current.contains(selection.anchorNode)) {
         // 获取选择文本的位置，用于显示悬浮框
         const rect = range.getBoundingClientRect();
@@ -83,7 +82,7 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
         }
 
         // 设置悬浮菜单的位置
-        setHighlightMenuStyle({
+        setMarkMenuStyle({
           position: 'fixed',
           top: `${Math.max(rect.top - 50, 10)}px`, // 在选中文本上方显示，确保不超出顶部
           left: `${leftPos}px`,
@@ -100,7 +99,7 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
           },
         });
       } else {
-        setHighlightMenuStyle(prev => ({ ...prev, display: 'none' }));
+        setMarkMenuStyle(prev => ({ ...prev, display: 'none' }));
       }
     };
 
@@ -111,30 +110,11 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
   }, []);
 
   // 处理高亮操作
-  const handleHighlight = (color: string) => {
-    if (selection.text && selection.range && onHighlight) {
-      // 计算选中文本在整个内容中的位置
-      const fullText = content || "";
-      const selectionText = selection.text;
-
-      console.log('selection=> ', selection);
-      // 简单实现，实际应用中可能需要更复杂的算法来确定准确位置
-      const startPos = fullText.indexOf(selectionText);
-      if (startPos !== -1) {
-        onHighlight(selectionText, {
-          start: startPos,
-          end: startPos + selectionText.length
-        }, color);
-      }else{
-        // 如果选中的文本不在内容中，中下位置提示给用户
-        notification.warning({
-          message: "暂不支持跨段落高亮",
-          placement: "bottomRight",
-          showProgress: true,
-        });
-      }
+  const handleMark = (color: string) => {
+    if (selection.text && selection.range && onMark) {
+      console.log('onMark=> ', window.getSelection());
+      onMark(color);
     }
-    setHighlightMenuStyle(prev => ({ ...prev, display: 'none' }));
   };
 
   // console.log('LazyUrlMarkdown=> ', {allMdContentWithAnchor: content});
@@ -177,16 +157,16 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
 
         {/* 直接渲染高亮选择器，通过CSS控制显示/隐藏 */}
         <div
-          className={styles.highlightMenu}
-          style={highlightMenuStyle}
+          className={styles.markMenu}
+          style={markMenuStyle}
         >
           <div className="flex p-2 bg-white rounded-lg shadow-lg">
-            {HIGHLIGHT_COLORS.map((item) => (
+            {MARK_COLORS.map((item) => (
               <div
                 key={item.name}
                 className="mx-1 px-2 py-1 rounded cursor-pointer hover:opacity-80 transition-all duration-200 flex items-center"
                 style={{ backgroundColor: item.bgColor, border: `1px solid ${item.color}` }}
-                onClick={() => handleHighlight(item.bgColor)}
+                onClick={() => handleMark(item.bgColor)}
               >
                 <span style={{ color: item.color, fontWeight: 'bold' }}>{item.name}</span>
               </div>

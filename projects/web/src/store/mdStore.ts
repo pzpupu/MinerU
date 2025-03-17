@@ -144,13 +144,13 @@ const useMdStore = create<MdState>()(devtools(
         results.forEach(([url, content]) => {
           newMdContents[url] = { content, isLoading: false };
         });
-        console.log("setMdUrlArr", requestId, newMdContents, results);
+        
         set((state) => ({
           mdContents: newMdContents,
           allMdContent: state.getAllMdContent(results.map((i) => i[1])),
-          allMdContentWithAnchor: state.getContentWithAnchors(
-            results.map((i) => i[1])
-          ),
+          // allMdContentWithAnchor: state.getContentWithAnchors(
+          //   results.map((i) => i[1])
+          // ),
         }));
       }
     },
@@ -246,13 +246,13 @@ const useMdStore = create<MdState>()(devtools(
               (content) => content.content
             );
             const newAllMdContent = state.getAllMdContent(contentArray);
-            const newAllMdContentWithAnchor =
-              state.getContentWithAnchors(contentArray);
+            // const newAllMdContentWithAnchor =
+            //   state.getContentWithAnchors(contentArray);
 
             return {
               mdContents: updatedMdContents,
               allMdContent: newAllMdContent,
-              allMdContentWithAnchor: newAllMdContentWithAnchor,
+              // allMdContentWithAnchor: newAllMdContentWithAnchor,
             };
           });
         } else {

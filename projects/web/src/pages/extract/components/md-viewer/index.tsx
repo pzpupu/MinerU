@@ -45,8 +45,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   const [displayType, setDisplayType] = useState(MD_PREVIEW_TYPE.preview);
   const params = useParams();
   const {
-    setAllMdContentWithAnchor,
-    allMdContentWithAnchor,
+    setAllMdContent,
+    allMdContent,
     setMdUrlArr,
     mdContents,
     updateMdContent,
@@ -73,20 +73,20 @@ const MdViewer: React.FC<IMdViewerProps> = ({
       : "w-0 h-0 overflow-hidden hidden";
   };
 
-  const pushMdViewerScroll = (scrollType?: "instant" | "smooth") => {
-    const container = document.getElementById(`md-container`);
-    // md渲染的时候用一个元素包括anchor
-    const element =
-      displayType === MD_PREVIEW_TYPE.preview
-        ? document.getElementById(`md-anchor-${curPage - 1}`)?.parentElement
-        : document.getElementById(`code-${curPage - 1}`);
-    if (element && container) {
-      container.scrollTo({
-        top: element.offsetTop - 124,
-        behavior: scrollType || "smooth",
-      });
-    }
-  };
+  // const pushMdViewerScroll = (scrollType?: "instant" | "smooth") => {
+  //   const container = document.getElementById(`md-container`);
+  //   // md渲染的时候用一个元素包括anchor
+  //   const element =
+  //     displayType === MD_PREVIEW_TYPE.preview
+  //       ? document.getElementById(`md-anchor-${curPage - 1}`)?.parentElement
+  //       : document.getElementById(`code-${curPage - 1}`);
+  //   if (element && container) {
+  //     container.scrollTo({
+  //       top: element.offsetTop - 124,
+  //       behavior: scrollType || "smooth",
+  //     });
+  //   }
+  // };
 
   // useEffect(() => {
   //   if (isHovering) return;
@@ -142,7 +142,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   }, [taskInfo?.markdownUrl, params?.jobID]);
 
   const handleContentChange = (val: string, index: number) => {
-    setAllMdContentWithAnchor(val);
+    setAllMdContent(val);
     statusRef?.current?.triggerSave();
     if (taskInfo?.file_key) {
       updateMdContent(taskInfo.file_key!, index, val);
@@ -150,10 +150,9 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   };
 
   // 处理文本高亮
-  const handleHighlight = (text: string, range: { start: number; end: number }, color: string) => {
+  const handleMark = (color: string) => {
     if (taskInfo?.file_key) {
       statusRef?.current?.triggerSave();
-      // addHighlight(taskInfo.file_key, curPage - 1, text, range, color);
       const pageIndex = curPage - 1;
       const urls = Object.keys(mdContents);
       const url = urls[pageIndex];
@@ -162,58 +161,33 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         message.info("Invalid page index");
         throw new Error("Invalid page index");
       }
+      console.log('handleHighlight=> ', window.getSelection());
       const content = mdContents[url]?.content || "";
        // 创建高亮标记，添加自定义类名以便于样式控制
-      const highlightedText = `<mark style="background-color:${color}; border-radius: 2px;">${text}</mark>`;
+      // const highlightedText = `<mark style="background-color:${color}; border-radius: 2px;">${text}</mark>`;
     // 查找精确的文本位置
       // 如果提供的范围不准确，尝试在内容中查找文本
-      let startPos = range.start;
-      let endPos = range.end;
+   
 
-      if (content.substring(startPos, endPos) !== text) {
-        // 尝试查找精确匹配
-        const exactPos = content.indexOf(text);
-        if (exactPos !== -1) {
-          startPos = exactPos;
-          endPos = exactPos + text.length;
-        } else {
-          // 如果找不到精确匹配，尝试模糊匹配
-          const fuzzyMatch = content.match(new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
-          if (fuzzyMatch && fuzzyMatch.index !== undefined) {
-            startPos = fuzzyMatch.index;
-            endPos = startPos + fuzzyMatch[0].length;
-            text = fuzzyMatch[0]; // 使用实际匹配的文本
-          }
-        }
-      }
-
-         // 替换文本
-      const newContent =
-        content.substring(0, startPos) +
-        highlightedText +
-        content.substring(endPos);
-
-      console.log('handleHighlight=> ', highlightedText);
-
-      setAllMdContentWithAnchor(newContent);
+      // setAllMdContent(newContent);
 
       // 更新内容
-      updateMdContent(taskInfo.file_key, pageIndex, newContent)
-      .then(() => {
-        notification.success({
-          message: "高亮成功",
-          placement: "bottomRight",
-          showProgress: true,
-        });
-      })
-      .catch((err) => {
-        notification.error({
-          message: "高亮失败",
-          description: err.message,
-          placement: "bottomRight",
-          showProgress: true,
-        });
-      })
+      // updateMdContent(taskInfo.file_key, pageIndex, newContent)
+      // .then(() => {
+      //   notification.success({
+      //     message: "高亮成功",
+      //     placement: "bottomRight",
+      //     showProgress: true,
+      //   });
+      // })
+      // .catch((err) => {
+      //   notification.error({
+      //     message: "高亮失败",
+      //     description: err.message,
+      //     placement: "bottomRight",
+      //     showProgress: true,
+      //   });
+      // })
     }
   };
 
@@ -319,8 +293,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         >
           <LazyUrlMarkdown
             markdownClass={"relative"}
-            content={allMdContentWithAnchor}
-            onHighlight={handleHighlight}
+            content={allMdContent}
+            onMark={handleMark}
           />
         </div>
         <div
