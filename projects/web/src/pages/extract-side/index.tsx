@@ -74,7 +74,7 @@ export const ExtractorSide = ({ className = "" }: IExtractorSideProps) => {
         className
       )}
     >
-      <div className={""}>
+     {/*  <div className={""}>
         <div className="h-[2rem] mb-6 flex justify-between items-center">
           <img
             className="h-full cursor-pointer"
@@ -83,10 +83,10 @@ export const ExtractorSide = ({ className = "" }: IExtractorSideProps) => {
             onClick={goToOpenSource}
           />
           <ExtractorGuide />
-        </div>
+        </div> */}
 
         {/* tab-list */}
-        <div className="mb-2">
+       {/*  <div className="mb-2">
           {tabList.map((i) => (
             <div
               key={i.type}
@@ -98,8 +98,8 @@ export const ExtractorSide = ({ className = "" }: IExtractorSideProps) => {
             </div>
           ))}
         </div>
-      </div>
-      <div className="bg-[#0d53de]/[0.08] w-full h-[1px] mt-2 mb-4"></div>
+      </div> */}
+      {/* <div className="bg-[#0d53de]/[0.08] w-full h-[1px] mt-2 mb-4"></div> */}
       <ExtractorQueue className="flex-1 overflow-y-auto mb-6" />
       <ExtractorLang className="absolute bottom-6" />
     </div>
