@@ -49,9 +49,11 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     setAllMdContent,
     allMdContent,
     setMdUrlArr,
+    setFullMdLink,
     mdContents,
     updateMdContent,
     updateMdContents,
+    updateFullMdContent,
   } = useMdStore();
   const [lineWrap, setLineWrap] = useState(false);
 
@@ -137,8 +139,9 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   // }, [taskInfo, isHovering, displayType]);
 
   useDeepCompareEffect(() => {
-    if (taskInfo?.markdownUrl) {
-      setMdUrlArr(taskInfo?.markdownUrl);
+    if (taskInfo?.fullMdLink) {
+      // setMdUrlArr(taskInfo?.markdownUrl);
+      setFullMdLink(taskInfo?.fullMdLink);
     }
     statusRef?.current?.reset();
   }, [taskInfo?.markdownUrl, params?.jobID]);
@@ -159,104 +162,62 @@ const MdViewer: React.FC<IMdViewerProps> = ({
       console.log('handleHighlight=> ', window.getSelection(), 'markdownPosition=>', markdownPosition);
 
       try {
-        // 根据markdownPosition获取开始和结束的文件
-        const startFile = markdownPosition.startKey;
-        const endFile = markdownPosition.endKey;
+        // 将内容分割成行
+        let lines = allMdContent.split('\n');
 
-        const updateData: Record<string, string> = {};
+        // 确保行号在有效范围内
+        if (markdownPosition.startLine && markdownPosition.endLine &&
+          markdownPosition.startLine <= lines.length &&
+          markdownPosition.endLine <= lines.length) {
 
-        // 同文件处理
-        if (startFile == endFile) {
-          // 获取当前文件的Markdown内容
-          const content = mdContents[startFile]?.content || "";
-          // 将内容分割成行
-          let lines = content.split('\n');
+          const startLineIndex = markdownPosition.startLine - 1;
+          const endLineIndex = markdownPosition.endLine - 1;
 
-          // 确保行号在有效范围内
-          if (markdownPosition.startLine && markdownPosition.endLine &&
-            markdownPosition.startLine <= lines.length &&
-            markdownPosition.endLine <= lines.length) {
+          // 处理单行段落
+          if (startLineIndex === endLineIndex) {
+            const line = lines[startLineIndex];
 
-            const startLineIndex = markdownPosition.startLine - 1;
-            const endLineIndex = markdownPosition.endLine - 1;
+            const startCol = markdownPosition.startColumn;
+            const endCol = markdownPosition.endColumn;
+            // 在startCol指定位置插入"<div style="background-color:${color};">"高亮标记
+            // 生成唯一id
+            const uniqueId = `${startLineIndex}-${startCol}-${endCol}`;
+            lines[startLineIndex] = `${line.substring(0, startCol)}\n\n<div style="background-color:${color};" meta-id="${uniqueId}">${line.substring(startCol, endCol)}</div meta-id="${uniqueId}">\n\n${line.substring(endCol)}`;
+          } else {
+            // 处理多行段落
+            const startCol = markdownPosition.startColumn;
+            const endCol = markdownPosition.endColumn;
+            const uniqueId = `${startLineIndex}-${endLineIndex}-${startCol}-${endCol}`;
 
-            // 处理单行段落
-            if (startLineIndex === endLineIndex) {
-              const line = lines[startLineIndex];
-
-              const startCol = markdownPosition.startColumn;
-              const endCol = markdownPosition.endColumn;
-              // 在startCol指定位置插入"<div style="background-color:${color};">"高亮标记
-              // 生成唯一id
-              const uniqueId = `${startLineIndex}-${startCol}-${endCol}`;
-              lines[startLineIndex] = `${line.substring(0, startCol)}\n\n<div style="background-color:${color};" meta-id="${uniqueId}">${line.substring(startCol, endCol)}</div meta-id="${uniqueId}">\n\n${line.substring(endCol)}`;
-              console.log(`lines[${startLineIndex}]=> `, lines[startLineIndex]);
-            } else {
-              // 处理多行段落
-              const startCol = markdownPosition.startColumn;
-              const endCol = markdownPosition.endColumn;
-              const uniqueId = `${startLineIndex}-${endLineIndex}-${startCol}-${endCol}`;
-
-              // 处理第一行
-              if (startLineIndex >= 0 && startLineIndex < lines.length) {
-                const firstLine = lines[startLineIndex];
-                if (startCol >= 0 && startCol <= firstLine.length) {
-                  // 添加高亮标记开始
-                  lines[startLineIndex] = firstLine.substring(0, startCol) +
-                    `\n\n<div style="background-color:${color};" meta-id="${uniqueId}">\n\n` +
-                    firstLine.substring(startCol);
-                }
+            // 处理第一行
+            if (startLineIndex >= 0 && startLineIndex < lines.length) {
+              const firstLine = lines[startLineIndex];
+              if (startCol >= 0 && startCol <= firstLine.length) {
+                // 添加高亮标记开始
+                lines[startLineIndex] = firstLine.substring(0, startCol) +
+                  `\n\n<div style="background-color:${color};" meta-id="${uniqueId}">\n\n` +
+                  firstLine.substring(startCol);
               }
+            }
 
-              // 处理最后一行
-              if (endLineIndex >= 0 && endLineIndex < lines.length) {
-                const lastLine = lines[endLineIndex];
-                if (endCol >= 0 && endCol <= lastLine.length) {
-                  // 添加高亮标记结束
-                  lines[endLineIndex] = lastLine.substring(0, endCol) +
-                    `\n\n</div meta-id="${uniqueId}">\n\n` +
-                    lastLine.substring(endCol);
-                } else {
-                  // 不存范围内，则添加到最后一行
-                  lines[endLineIndex] = lastLine + `\n\n</div meta-id="${uniqueId}">\n\n`;
-                }
+            // 处理最后一行
+            if (endLineIndex >= 0 && endLineIndex < lines.length) {
+              const lastLine = lines[endLineIndex];
+              if (endCol >= 0 && endCol <= lastLine.length) {
+                // 添加高亮标记结束
+                lines[endLineIndex] = lastLine.substring(0, endCol) +
+                  `\n\n</div meta-id="${uniqueId}">\n\n` +
+                  lastLine.substring(endCol);
+              } else {
+                // 不存范围内，则添加到最后一行
+                lines[endLineIndex] = lastLine + `\n\n</div meta-id="${uniqueId}">\n\n`;
               }
             }
           }
-          updateData[startFile] = lines.join('\n');
-        } else {
-          // 跨文件处理
-          const startContent = mdContents[startFile]?.content || "";
-          const endContent = mdContents[endFile]?.content || "";
-
-          const startLineIndex = markdownPosition.startLine - 1;
-          const startCol = markdownPosition.startColumn;
-          const endLineIndex = markdownPosition.endLine - 1;
-          const endCol = markdownPosition.endColumn;
-          const uniqueId = `${startFile}-${endFile}-${startCol}-${endCol}`;
-
-          // 根据位置添加开始标记
-          const startContents = startContent.split('\n');
-
-          if (startLineIndex >= 0 && startLineIndex < startContents.length) {
-            startContents[startLineIndex] = startContents[startLineIndex].substring(0, startCol) +
-              `\n<div style="background-color:${color};" meta-id="${uniqueId}">\n` +
-              startContents[startLineIndex].substring(startCol);
-          }
-          updateData[startFile] = startContents.join('\n');
-        
-          // 根据位置添加结束标记
-          const endContents = endContent.split('\n');
-          if (endLineIndex >= 0 && endLineIndex < endContents.length) {
-            endContents[endLineIndex] = endContents[endLineIndex].substring(0, endCol) +
-              `\n</div meta-id="${uniqueId}">\n` +
-              endContents[endLineIndex].substring(endCol);
-          }
-          updateData[endFile] = endContents.join('\n');
         }
+        const newMdContent = lines.join('\n');
 
-
-        updateMdContents(taskInfo.file_key!, updateData).then((result: boolean) => {
+        updateFullMdContent(taskInfo.file_key!, newMdContent).then((result: boolean) => {
           if (result) {
             notification.success({
               message: "高亮成功",
@@ -408,7 +369,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         >
           <LazyUrlMarkdown
             markdownClass={"relative"}
-            content={mdContents}
+            content={allMdContent}
             onMark={handleMark}
             onDeleteMark={handleDeleteMark}
           />

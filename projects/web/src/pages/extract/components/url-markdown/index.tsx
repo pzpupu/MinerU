@@ -11,7 +11,7 @@ import { useRef } from "react";
 import SelectFloatingBox, { DeleteMarkInfo, MarkdownPosition } from "../select-floating-box";
 
 interface IMarkdownProps {
-  content: Record<string, MdContent>;
+  content: string;
   markdownClass?: string;
   markdownId?: string;
   onMark?: (color: string, markdownPosition: MarkdownPosition) => void;
@@ -42,10 +42,9 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
   }
 
   // 添加位置信息属性到元素
-  const addPositionAttributes = (node: any, key: string) => {
+  const addPositionAttributes = (node: any) => {
     const { start, end } = node?.position || {};
     return {
-      'data-key': key,
       'data-start-line': start?.line,
       'data-start-column': start?.column,
       'data-start-offset': start?.offset,
@@ -58,10 +57,8 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
   return (
     <div className="min-h-[100px]">
       <div ref={ref} className={cls(styles.mdViewerWrap, "bg-white text-[0.75rem]", markdownClass)} id="preview-container">
-        {Object.keys(content).map((key) => (
-          <ReactMarkdown
-            key={key}
-            remarkPlugins={[
+        <ReactMarkdown
+          remarkPlugins={[
               remarkMath,
               [remarkGfm, { singleTilde: false }, { strict: "ignore" }],
             ]}
@@ -77,47 +74,47 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
                     // eslint-disable-next-line react/no-children-prop
                     children={String(children).replace(/\n$/, "")}
                     language={match[1]}
-                    {...addPositionAttributes(node, key)}
+                    {...addPositionAttributes(node)}
                   />
                 ) : (
                   <code
                     {...rest}
                     className="p-4 my-2 bg-[#f6f8fa] !bg-black rounded-md block"
-                    {...addPositionAttributes(node, key)}
+                    {...addPositionAttributes(node)}
                   >
                     {children}
                   </code>
                 );
               },
               h1({ node, children }) {
-                return <h1 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h1>;
+                return <h1 {...node?.properties} {...addPositionAttributes(node)}>{children}</h1>;
               },
               h2({ node, children }) {
-                return <h2 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h2>;
+                return <h2 {...node?.properties} {...addPositionAttributes(node)}>{children}</h2>;
               },
               h3({ node, children }) {
-                return <h3 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h3>;
+                return <h3 {...node?.properties} {...addPositionAttributes(node)}>{children}</h3>;
               },
               h4({ node, children }) {
-                return <h4 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h4>;
+                return <h4 {...node?.properties} {...addPositionAttributes(node)}>{children}</h4>;
               },
               h5({ node, children }) {
-                return <h5 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h5>;
+                return <h5 {...node?.properties} {...addPositionAttributes(node)}>{children}</h5>;
               },
               h6({ node, children }) {
-                return <h6 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h6>;
+                return <h6 {...node?.properties} {...addPositionAttributes(node)}>{children}</h6>;
               },
               p({ node, children }) {
-                return <p {...node?.properties} {...addPositionAttributes(node, key)}>{children}</p>;
+                return <p {...node?.properties} {...addPositionAttributes(node)}>{children}</p>;
               },
               li({ node, children }) {
-                return <li {...node?.properties} {...addPositionAttributes(node, key)}>{children}</li>;
+                return <li {...node?.properties} {...addPositionAttributes(node)}>{children}</li>;
               },
               img({ node }) {
-                return <img {...node?.properties} {...addPositionAttributes(node, key)} />;
+                return <img {...node?.properties} {...addPositionAttributes(node)} />;
               },
               a({ node, children }) {
-                return <a {...node?.properties} {...addPositionAttributes(node, key)}>{children}</a>;
+                return <a {...node?.properties} {...addPositionAttributes(node)}>{children}</a>;
               },
               // span({ node, children }) {
               //   const className = cls(node?.properties?.className || []);
@@ -167,20 +164,19 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
               //   return <hr {...node?.properties} {...addPositionAttributes(node, key)} />;
               // },
               text({ node, children }) {
-                return <p {...node?.properties} {...addPositionAttributes(node, key)}>{children}</p>;
+                return <p {...node?.properties} {...addPositionAttributes(node)}>{children}</p>;
               },
               // // 默认处理所有其他元素
               div({ node, children }) {
                 const { className, style, ...rest } = node?.properties || {};
                 const _className = cls(node?.properties?.className || []);
                 const _style = parseStyleString(node?.properties?.style as string || "");
-                return <div className={_className} style={_style} {...rest} {...addPositionAttributes(node, key)}>{children}</div>;
+                return <div className={_className} style={_style} {...rest} {...addPositionAttributes(node)}>{children}</div>;
               },
             }}
           >
-            {content[key].content}
-          </ReactMarkdown>
-        ))}
+          {content}
+        </ReactMarkdown>
       </div>
       <SelectFloatingBox htmlRef={ref} onMark={onMark} onDeleteMark={onDeleteMark} />
     </div>

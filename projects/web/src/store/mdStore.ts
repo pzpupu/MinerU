@@ -40,6 +40,7 @@ interface MdState {
   error: Error | null;
   currentRequestId: number;
   setMdUrlArr: (urls: string[]) => Promise<void>;
+  setFullMdLink: (link: string) => Promise<void>;
   getAllMdContent: (data: string[]) => string;
   setAllMdContent: (val?: string) => void;
   setAllMdContentWithAnchor: (val?: string) => void;
@@ -57,6 +58,10 @@ interface MdState {
   updateMdContents: (
     fileKey: string,
     data: Record<string, string>
+  ) => Promise<boolean>;
+  updateFullMdContent: (
+    fileKey: string,
+    data: string
   ) => Promise<boolean>;
 }
 
@@ -157,6 +162,14 @@ const useMdStore = create<MdState>()(devtools(
           // ),
         }));
       }
+    },
+
+    setFullMdLink: async (link: string) => {
+      const response = await axios.get<string>(link);
+      const content = response.data;
+      set(() => ({
+        allMdContent: content,
+      }));
     },
 
     getAllMdContent: (data) => {
@@ -308,6 +321,32 @@ const useMdStore = create<MdState>()(devtools(
         throw error;
       }
     },
+    updateFullMdContent: async (fileKey: string, data: string) => {
+      try {
+        const params: UpdateMarkdownRequest = {
+          file_key: fileKey,
+          data: {
+            'full': data,
+          },
+        };
+        const result = await updateMarkdownContent(params);
+
+        if (result && result.success) {
+          // 更新本地状态
+          set(() => {
+            return {
+              allMdContent: data,
+            };
+          });
+        } else {
+          throw new Error("Failed to update Markdown content");
+        }
+
+      } catch (error) {
+        set({ error: error as Error });
+        throw error;
+      }
+    }
   })
 ));
 

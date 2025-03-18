@@ -20,11 +20,9 @@ const MARK_COLORS = [
 
 // 定义Markdown位置信息接口
 export interface MarkdownPosition {
-    startKey: string;
     startLine: number;
     startColumn: number;
     startOffset: number;
-    endKey: string;
     endLine: number;
     endColumn: number;
     endOffset: number;
@@ -32,7 +30,6 @@ export interface MarkdownPosition {
 
 export interface DeleteMarkInfo {
     metaId: string;
-    key: string;
     startLine: number;
     startColumn: number;
     startOffset: number;
@@ -115,11 +112,9 @@ const SelectFloatingBox: React.FC<{
 
 
                 const position: MarkdownPosition = {
-                    startKey: '',
                     startLine: 0,
                     startColumn: 0,
                     startOffset: 0,
-                    endKey: '',
                     endLine: 0,
                     endColumn: 0,
                     endOffset: 0,
@@ -127,16 +122,20 @@ const SelectFloatingBox: React.FC<{
 
                 // startContainer向上遍历，直到找到key
                 let startElement = range.startContainer as HTMLElement;
-                while (!startElement.dataset || !startElement.dataset.key) {
+                while (!startElement?.dataset || !startElement?.dataset.startLine) {
                     startElement = startElement.parentElement!;
                 }
 
                 console.log('startElement=> ', startElement);
-                if (startElement.dataset && startElement.dataset.key) {
-                    position.startKey = startElement.dataset.key || '';
+                if (startElement.dataset && startElement.dataset.startLine) {
+                    // 如果是h1-h6标签，则startColumn需要+2
+                    if (startElement.tagName === 'H1' || startElement.tagName === 'H2' || startElement.tagName === 'H3' || startElement.tagName === 'H4' || startElement.tagName === 'H5' || startElement.tagName === 'H6') {
+                        position.startColumn = range.startOffset + 2;
+                    } else {
+                        position.startColumn = range.startOffset;
+                    }
                     position.startLine = parseInt(startElement.dataset.startLine || '0');
                     // position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
-                    position.startColumn = range.startOffset;
                     position.startOffset = parseInt(startElement.dataset.startOffset || '0');
                 } else {
                     notification.error({
@@ -150,14 +149,13 @@ const SelectFloatingBox: React.FC<{
                 }
 
                 let endElement = range.endContainer as HTMLElement;
-                while (!endElement.dataset || !endElement.dataset.key) {
+                while (!endElement?.dataset || !endElement?.dataset.endLine) {
                     endElement = endElement.parentElement!;
                 }
 
                 console.log('endElement=> ', endElement);
 
-                if (endElement.dataset) {
-                    position.endKey = endElement.dataset.key || '';
+                if (endElement.dataset && endElement.dataset.endLine) {
                     position.endLine = parseInt(endElement.dataset.endLine || '0');
                     // position.endColumn = parseInt(endElement.dataset.endColumn || '0') ;
                     position.endColumn = range.endOffset;
@@ -213,11 +211,9 @@ const SelectFloatingBox: React.FC<{
             const dataset = markDiv.dataset;
             const deleteMarkInfo: DeleteMarkInfo = {
                 metaId: metaId,
-                startKey: dataset?.startKey || '',
                 startLine: parseInt(dataset?.startLine || '0'),
                 startColumn: parseInt(dataset?.startColumn || '0'),
                 startOffset: parseInt(dataset?.startOffset || '0'),
-                endKey: dataset?.endKey || '',
                 endLine: parseInt(dataset?.endLine || '0'),
                 endColumn: parseInt(dataset?.endColumn || '0'),
                 endOffset: parseInt(dataset?.endOffset || '0'),

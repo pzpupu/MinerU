@@ -32,18 +32,18 @@ class MarkdownView(Resource):
                     with open(md_path, 'w', encoding="utf-8") as f:
                         f.write(v)
 
-            full_content = ""
-            # 获取所有md文件, 并排除full.md
-            md_files = list(Path(markdown_file_dir).glob('*.md'))
-            md_files = [file for file in md_files if file.stem != "full"]
-            # 按文件名排序
-            md_files.sort(key=lambda x: int(x.stem))
-            for path_obj in md_files:
-                if path_obj.is_file() and path_obj.suffix == ".md" and path_obj.stem != "full":
-                    with open(path_obj, 'r', encoding="utf-8") as f:
-                        full_content += f.read() + "\n"
-            with open(f"{markdown_file_dir}/full.md", 'w', encoding="utf-8") as f:
-                f.write(full_content)
+            # full_content = ""
+            # # 获取所有md文件, 并排除full.md
+            # md_files = list(Path(markdown_file_dir).glob('*.md'))
+            # md_files = [file for file in md_files if file.stem != "full"]
+            # # 按文件名排序
+            # md_files.sort(key=lambda x: int(x.stem))
+            # for path_obj in md_files:
+            #     if path_obj.is_file() and path_obj.suffix == ".md" and path_obj.stem != "full":
+            #         with open(path_obj, 'r', encoding="utf-8") as f:
+            #             full_content += f.read() + "\n"
+            # with open(f"{markdown_file_dir}/full.md", 'w', encoding="utf-8") as f:
+            #     f.write(full_content)
         else:
             return generate_response(code=400, msg="Invalid file_key", msgZH="文件哈希错误")
         return generate_response(data={"success": True}, msg="success", msgZH="更新成功")
