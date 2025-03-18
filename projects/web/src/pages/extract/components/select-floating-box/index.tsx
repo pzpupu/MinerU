@@ -156,9 +156,13 @@ const SelectFloatingBox: React.FC<{
                 console.log('endElement=> ', endElement);
 
                 if (endElement.dataset && endElement.dataset.endLine) {
+                    if (endElement.tagName === 'H1' || endElement.tagName === 'H2' || endElement.tagName === 'H3' || endElement.tagName === 'H4' || endElement.tagName === 'H5' || endElement.tagName === 'H6') {
+                        position.endColumn = range.endOffset + 2;
+                    } else {
+                        position.endColumn = range.endOffset;
+                    }
                     position.endLine = parseInt(endElement.dataset.endLine || '0');
                     // position.endColumn = parseInt(endElement.dataset.endColumn || '0') ;
-                    position.endColumn = range.endOffset;
                     position.endOffset = parseInt(endElement.dataset.endOffset || '0');
                 } else {
                     notification.error({
@@ -218,7 +222,7 @@ const SelectFloatingBox: React.FC<{
                 endColumn: parseInt(dataset?.endColumn || '0'),
                 endOffset: parseInt(dataset?.endOffset || '0'),
             };
-            onDeleteMark(deleteMarkInfo);
+            onDeleteMark?.(deleteMarkInfo);
         }
     };
 

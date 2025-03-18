@@ -62,7 +62,7 @@ interface MdState {
   updateFullMdContent: (
     fileKey: string,
     data: string
-  ) => Promise<boolean>;
+  ) => Promise<void>;
 }
 
 const MAX_CONCURRENT_REQUESTS = 2;

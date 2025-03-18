@@ -182,7 +182,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
             // 在startCol指定位置插入"<div style="background-color:${color};">"高亮标记
             // 生成唯一id
             const uniqueId = `${startLineIndex}-${startCol}-${endCol}`;
-            lines[startLineIndex] = `${line.substring(0, startCol)}\n\n<div style="background-color:${color};" meta-id="${uniqueId}">${line.substring(startCol, endCol)}</div meta-id="${uniqueId}">\n\n${line.substring(endCol)}`;
+            lines[startLineIndex] = `${line.substring(0, startCol)}\n\n<div style="background-color:${color};" meta-id="${uniqueId}">\n\n${line.substring(startCol, endCol)}\n\n</div meta-id="${uniqueId}">\n\n${line.substring(endCol)}`;
           } else {
             // 处理多行段落
             const startCol = markdownPosition.startColumn;
@@ -217,15 +217,13 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         }
         const newMdContent = lines.join('\n');
 
-        updateFullMdContent(taskInfo.file_key!, newMdContent).then((result: boolean) => {
-          if (result) {
-            notification.success({
-              message: "高亮成功",
-              placement: "bottomRight",
-              showProgress: true,
-              duration: 2,
-            });
-          }
+        updateFullMdContent(taskInfo.file_key!, newMdContent).then(() => {
+          notification.success({
+            message: "高亮成功",
+            placement: "bottomRight",
+            showProgress: true,
+            duration: 2,
+          });
         }).catch((error: Error) => {
           notification.error({
             message: "高亮更新失败",
@@ -260,15 +258,59 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   const handleDeleteMark = (deleteMarkInfo: DeleteMarkInfo) => {
     if (taskInfo?.file_key && deleteMarkInfo) {
       statusRef?.current?.triggerSave();
+      console.log('handleDeleteMark=> ', deleteMarkInfo);
+      try {
+        // 将内容分割成行
+        let lines = allMdContent.split('\n');
+        const startLineIndex = deleteMarkInfo.startLine - 1;
+        const endLineIndex = deleteMarkInfo.endLine - 1;
+        const uniqueId = deleteMarkInfo.metaId;
 
-      // 
-      updateMdContents(taskInfo.file_key!, {
-        [deleteMarkInfo.startKey]: deleteMarkInfo.startKey,
-      });
+        // 处理单行段落
+        if (startLineIndex === endLineIndex) {
+          const line = lines[startLineIndex];
+          // 删除高亮
+          const regex = new RegExp(`<div style="background-color:.*?;" meta-id="${uniqueId}">|<\/div meta-id="${uniqueId}">`, 'g');
+          lines[startLineIndex] = line.replace(regex, '');
+        } else {
+          // 处理多行段落
+          // const startRegex = new RegExp(`<div style="background-color:.*?;" meta-id="${uniqueId}">`, 'g');
+          // const endRegex = new RegExp(`</div meta-id="${uniqueId}">`, 'g');
+          // lines[startLineIndex] = lines[startLineIndex].replace(startRegex, '');
+          // lines[endLineIndex] = lines[endLineIndex].replace(endRegex, '');
+          lines.splice(endLineIndex-1, endLineIndex);
+          lines.splice(startLineIndex-1, startLineIndex+1);
+        }
+
+        const newMdContent = lines.join('\n');
+        updateFullMdContent(taskInfo.file_key!, newMdContent).then(() => {
+          notification.success({
+            message: "删除高亮成功",
+              placement: "bottomRight", 
+              showProgress: true,
+            duration: 2,
+          });
+        }).catch((error: Error) => {
+          notification.error({
+            message: "删除高亮失败",
+            description: error.message,
+            placement: "bottomRight",
+            showProgress: true,
+            duration: 2,
+          });
+        });
+      } catch (error) {
+        console.error("删除高亮处理错误:", error);
+        notification.error({
+          message: "删除高亮处理错误",
+          description: (error as Error).message,
+          placement: "bottomRight",
+          showProgress: true,
+          duration: 2,
+        });
+      }
     }
   };
-
-  // console.log('md-viewer=> ', {curPage});
 
   return (
     <div className={cls(className)} ref={mdViewerPef}>
