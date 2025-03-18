@@ -61,7 +61,8 @@ interface MdState {
   ) => Promise<boolean>;
   updateFullMdContent: (
     fileKey: string,
-    data: string
+    data: string,
+    refresh?: boolean
   ) => Promise<void>;
 }
 
@@ -321,7 +322,7 @@ const useMdStore = create<MdState>()(devtools(
         throw error;
       }
     },
-    updateFullMdContent: async (fileKey: string, data: string) => {
+    updateFullMdContent: async (fileKey: string, data: string, refresh: boolean = true) => {
       try {
         const params: UpdateMarkdownRequest = {
           file_key: fileKey,
@@ -333,7 +334,7 @@ const useMdStore = create<MdState>()(devtools(
 
         if (result && result.success) {
           // 更新本地状态
-          set(() => {
+          refresh && set(() => {
             return {
               allMdContent: data,
             };

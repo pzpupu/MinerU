@@ -12,7 +12,7 @@ import LazyUrlMarkdown from "../url-markdown";
 import exitFullScreenSvg from "@/assets/pdf/exitFullScreen.svg";
 import fullScreenSvg from "@/assets/pdf/fullScreen.svg";
 import { MD_PREVIEW_TYPE } from "@/types/extract-task-type";
-import _ from "lodash";
+import _, { debounce } from "lodash";
 import { TaskIdResItem } from "@/api/extract";
 import useMdStore from "@/store/mdStore";
 import CodeMirror from "@/components/code-mirror";
@@ -147,18 +147,16 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   }, [taskInfo?.markdownUrl, params?.jobID]);
 
   const handleContentChange = (val: string) => {
-    // setAllMdContent(val);
+    setAllMdContent(val);
     statusRef?.current?.triggerSave();
     if (taskInfo?.file_key) {
-      updateFullMdContent(taskInfo.file_key!, val);
+      updateFullMdContent(taskInfo.file_key!, val, false);
     }
   };
 
   // 处理文本高亮
   const handleMark = (color: string, markdownPosition: MarkdownPosition) => {
     if (taskInfo?.file_key && markdownPosition) {
-      statusRef?.current?.triggerSave();
-
       console.log('handleHighlight=> ', window.getSelection(), 'markdownPosition=>', markdownPosition);
 
       try {
@@ -217,6 +215,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         }
         const newMdContent = lines.join('\n');
 
+        statusRef?.current?.triggerSave();
         updateFullMdContent(taskInfo.file_key!, newMdContent).then(() => {
           notification.success({
             message: "高亮成功",
@@ -257,7 +256,6 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   // 处理删除高亮
   const handleDeleteMark = (deleteMarkInfo: DeleteMarkInfo) => {
     if (taskInfo?.file_key && deleteMarkInfo) {
-      statusRef?.current?.triggerSave();
       console.log('handleDeleteMark=> ', deleteMarkInfo);
       try {
         // 将内容分割成行
@@ -283,11 +281,12 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         }
 
         const newMdContent = lines.join('\n');
+        statusRef?.current?.triggerSave();
         updateFullMdContent(taskInfo.file_key!, newMdContent).then(() => {
           notification.success({
             message: "删除高亮成功",
-              placement: "bottomRight", 
-              showProgress: true,
+            placement: "bottomRight",
+            showProgress: true,
             duration: 2,
           });
         }).catch((error: Error) => {
@@ -423,11 +422,11 @@ const MdViewer: React.FC<IMdViewerProps> = ({
             <CodeMirror
               value={allMdContent}
               lineWrapping={lineWrap}
-              onChange={(val) => handleContentChange(val)}
+              onChange={_.debounce((val) => handleContentChange(val), 1000)}
               editable
               className="w-full h-full"
-                />
-              </div>
+            />
+          </div>
 
           {/* {taskInfo?.markdownUrl?.map((url: string, index: number) => {
             const md = mdContents[url]?.content || "";

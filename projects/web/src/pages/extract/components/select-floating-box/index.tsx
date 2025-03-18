@@ -121,8 +121,19 @@ const SelectFloatingBox: React.FC<{
                     endOffset: 0,
                 };
 
+                // // range.startContainer向左右遍历，尝试找到一个最近的元素中，有data-start-line属性的元素，如果都未找到，则向开始遍历有data-start-line属性的元素
+                // let startElement = range.startContainer as HTMLElement;
+                // while (!startElement?.dataset || !startElement?.dataset.startLine) {
+                //     if (startElement.previousElementSibling) {
+                //         startElement = startElement.previousElementSibling as HTMLElement;
+                //     }
+                // }
+                
+                
+
                 // startContainer向上遍历，直到找到key
                 let startElement = range.startContainer as HTMLElement;
+                
                 // 先开始向前遍历，直到找到有data-start-line属性的元素，如果找不到，则继续向上遍历，直到mdContainer元素为止
                 while (!startElement?.dataset || !startElement?.dataset.startLine) {
                     // while (startElement.parentElement != mdContainer) {
@@ -142,10 +153,18 @@ const SelectFloatingBox: React.FC<{
                 if (startElement.dataset && startElement.dataset.startLine && startElement.dataset.startColumn) {
                     // 如果是h1-h6标签，则startColumn需要+2
                     if (position.startColumn === -1) {
-                        if (startElement.tagName === 'H1' || startElement.tagName === 'H2' || startElement.tagName === 'H3' || startElement.tagName === 'H4' || startElement.tagName === 'H5' || startElement.tagName === 'H6') {
+                        if (startElement.tagName === 'H1') {
                             position.startColumn = range.startOffset + 2;
-                        } else if (startElement.tagName === 'SPAN') {
-                            position.startColumn = parseInt(startElement.dataset.startColumn || '0') - 1;
+                        } else if (startElement.tagName === 'H2') {
+                            position.startColumn = range.startOffset + 3;
+                        } else if (startElement.tagName === 'H3') {
+                            position.startColumn = range.startOffset + 4;
+                        } else if (startElement.tagName === 'H4') {
+                            position.startColumn = range.startOffset + 5;
+                        } else if (startElement.tagName === 'H5') {
+                            position.startColumn = range.startOffset + 6;
+                        } else if (startElement.tagName === 'H6') {
+                            position.startColumn = range.startOffset + 7;
                         } else {
                             position.startColumn = range.startOffset;
                         }
@@ -182,7 +201,7 @@ const SelectFloatingBox: React.FC<{
 
                 if (endElement.dataset && endElement.dataset.endLine && endElement.dataset.endColumn) {
                     if (position.endColumn === -1) {
-                        position.endColumn = parseInt(endElement.dataset.startColumn || '0') + range.endOffset -1;
+                        position.endColumn = parseInt(endElement.dataset.startColumn || '0') + range.endOffset - 1;
                     }
 
                     position.endLine = parseInt(endElement.dataset.endLine || '0');
