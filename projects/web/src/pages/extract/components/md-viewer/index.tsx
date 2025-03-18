@@ -216,17 +216,14 @@ const MdViewer: React.FC<IMdViewerProps> = ({
                   lines[endLineIndex] = lastLine.substring(0, endCol) +
                     `\n\n</div meta-id="${uniqueId}">\n\n` +
                     lastLine.substring(endCol);
+                } else {
+                  // 不存范围内，则添加到最后一行
+                  lines[endLineIndex] = lastLine + `\n\n</div meta-id="${uniqueId}">\n\n`;
                 }
               }
             }
           }
-          Object.keys(mdContents).forEach((key, index) => {
-            if (key === startFile) {
-              updateData[index] = lines.join('\n');
-              return;
-            }
-          });
-          
+          updateData[startFile] = lines.join('\n');
         } else {
           // 跨文件处理
           const startContent = mdContents[startFile]?.content || "";
@@ -246,13 +243,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
               `\n<div style="background-color:${color};" meta-id="${uniqueId}">\n` +
               startContents[startLineIndex].substring(startCol);
           }
-          Object.keys(mdContents).forEach((key, index) => {
-            if (key === startFile) {
-              updateData[index] = startContents.join('\n');
-              return;
-            }
-          });
-
+          updateData[startFile] = startContents.join('\n');
+        
           // 根据位置添加结束标记
           const endContents = endContent.split('\n');
           if (endLineIndex >= 0 && endLineIndex < endContents.length) {
@@ -260,12 +252,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
               `\n</div meta-id="${uniqueId}">\n` +
               endContents[endLineIndex].substring(endCol);
           }
-          Object.keys(mdContents).forEach((key, index) => {
-            if (key === endFile) {
-              updateData[index] = endContents.join('\n');
-              return;
-            }
-          });
+          updateData[endFile] = endContents.join('\n');
         }
 
 

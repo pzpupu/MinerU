@@ -268,9 +268,19 @@ const useMdStore = create<MdState>()(devtools(
     },
     updateMdContents: async (fileKey: string, data: Record<string, string>) => {
       try {
+        const newData: Record<string, string> = {};
+        debugger
+        Object.keys(get().mdContents).forEach((key, index) => {
+          Object.keys(data).forEach((item) => {
+            if (key === item) {
+              newData[index] = data[item]
+            }
+          });
+        });
+
         const params: UpdateMarkdownRequest = {
           file_key: fileKey,
-          data: data,
+          data: newData,
         };
 
         const result = await updateMarkdownContent(params);
@@ -279,10 +289,10 @@ const useMdStore = create<MdState>()(devtools(
           // 更新本地状态
           set((state) => {
             const updatedMdContents = { ...state.mdContents };
-            Object.entries(data).forEach(([key, newContent]) => {
+            Object.keys(data).forEach((key) => {
               updatedMdContents[key] = {
-                ...updatedMdContents[key], 
-                content: newContent,
+                ...updatedMdContents[key],
+                content: data[key],
               };
             });
 

@@ -104,7 +104,7 @@ const SelectFloatingBox: React.FC<{
                 }
 
                 console.log('startElement=> ', startElement);
-                if (startElement.dataset) {
+                if (startElement.dataset && startElement.dataset.key) {
                     position.startKey = startElement.dataset.key || '';
                     position.startLine = parseInt(startElement.dataset.startLine || '0');
                     // position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;

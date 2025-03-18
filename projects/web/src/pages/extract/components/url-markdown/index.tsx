@@ -24,20 +24,20 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  // function parseStyleString(styleString: string) {
-  //   const styleObject: Record<string, string> = {};
-  //   const declarations = styleString.split(";").filter(Boolean);
+  function parseStyleString(styleString: string) {
+    const styleObject: Record<string, string> = {};
+    const declarations = styleString.split(";").filter(Boolean);
 
-  //   declarations.forEach((declaration) => {
-  //     const [property, value] = declaration.split(":").map((str) => str.trim());
-  //     if (property && value) {
-  //       const camelCaseProperty = property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-  //       styleObject[camelCaseProperty] = value;
-  //     }
-  //   });
+    declarations.forEach((declaration) => {
+      const [property, value] = declaration.split(":").map((str) => str.trim());
+      if (property && value) {
+        const camelCaseProperty = property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+        styleObject[camelCaseProperty] = value;
+      }
+    });
 
-  //   return styleObject;
-  // }
+    return styleObject;
+  }
 
   // 添加位置信息属性到元素
   const addPositionAttributes = (node: any, key: string) => {
@@ -164,10 +164,15 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
               // hr({ node }) {
               //   return <hr {...node?.properties} {...addPositionAttributes(node, key)} />;
               // },
+              text({ node, children }) {
+                return <p {...node?.properties} {...addPositionAttributes(node, key)}>{children}</p>;
+              },
               // // 默认处理所有其他元素
-              // div({ node, children }) {
-              //   return <div {...node?.properties} {...addPositionAttributes(node, key)}>{children}</div>;
-              // },
+              div({ node, children }) {
+                const className = cls(node?.properties?.className || []);
+                const style = parseStyleString(node?.properties?.style as string || "");
+                return <div className={className} style={style} {...addPositionAttributes(node, key)}>{children}</div>;
+              },
             }}
           >
             {content[key].content}
