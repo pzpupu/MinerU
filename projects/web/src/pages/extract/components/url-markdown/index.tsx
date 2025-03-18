@@ -59,33 +59,39 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
       <div ref={ref} className={cls(styles.mdViewerWrap, "bg-white text-[0.75rem]", markdownClass)} id="preview-container">
         <ReactMarkdown
           remarkPlugins={[
-              remarkMath,
-              [remarkGfm, { singleTilde: false }, { strict: "ignore" }],
-            ]}
-            rehypePlugins={[[rehypeKatex, { strict: "ignore" }], rehypeRaw]}
+            remarkMath,
+            [remarkGfm, { singleTilde: false }, { strict: "ignore" }],
+          ]}
+          rehypePlugins={
+            [
+              [rehypeKatex, { strict: "ignore" }], 
+              rehypeRaw
+            ]
+          }
             components={{
-              code(props) {
-                const { children, className, node, ...rest } = props;
-                const match = /language-(\w+)/.exec(className || "");
-                return match ? (
-                  <SyntaxHighlighter
-                    PreTag="div"
-                    className="rounded-md"
-                    // eslint-disable-next-line react/no-children-prop
-                    children={String(children).replace(/\n$/, "")}
-                    language={match[1]}
-                    {...addPositionAttributes(node)}
-                  />
-                ) : (
-                  <code
-                    {...rest}
-                    className="p-4 my-2 bg-[#f6f8fa] !bg-black rounded-md block"
-                    {...addPositionAttributes(node)}
-                  >
-                    {children}
-                  </code>
-                );
-              },
+              // code(props) {
+              //   const { children, className, node, ...rest } = props;
+              //   debugger;
+              //   const match = /language-(\w+)/.exec(className || "");
+              //   return match ? (
+              //     <SyntaxHighlighter
+              //       PreTag="div"
+              //       className="rounded-md"
+              //       // eslint-disable-next-line react/no-children-prop
+              //       children={String(children).replace(/\n$/, "")}
+              //       language={match[1]}
+              //       {...addPositionAttributes(node)}
+              //     />
+              //   ) : (
+              //     <code
+              //       {...rest}
+              //       className="p-4 my-2 bg-[#f6f8fa] !bg-black rounded-md block"
+              //       {...addPositionAttributes(node)}
+              //     >
+              //       {children}
+              //     </code>
+              //   );
+              // },
               h1({ node, children }) {
                 return <h1 {...node?.properties} {...addPositionAttributes(node)}>{children}</h1>;
               },
@@ -116,11 +122,12 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
               a({ node, children }) {
                 return <a {...node?.properties} {...addPositionAttributes(node)}>{children}</a>;
               },
-              // span({ node, children }) {
-              //   const className = cls(node?.properties?.className || []);
-              //   const style = parseStyleString(node?.properties?.style as string || "");
-              //   return <span className={className} style={style} {...addPositionAttributes(node, key)}>{children}</span>;
-              // },
+              span({ node, children }) {
+                const className = cls(node?.properties?.className || []);
+                const style = parseStyleString(node?.properties?.style as string || "");
+                // console.log('span=> ', node);
+                return <span className={className} style={style} {...addPositionAttributes(node)}>{children}</span>;
+              },
               // blockquote({ node, children }) {
               //   return <blockquote {...node?.properties} {...addPositionAttributes(node, key)}>{children}</blockquote>;
               // },
@@ -163,14 +170,15 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
               // hr({ node }) {
               //   return <hr {...node?.properties} {...addPositionAttributes(node, key)} />;
               // },
-              text({ node, children }) {
-                return <p {...node?.properties} {...addPositionAttributes(node)}>{children}</p>;
-              },
+              // text({ node, children }) {
+              //   return <p {...node?.properties} {...addPositionAttributes(node)}>{children}</p>;
+              // },
               // // 默认处理所有其他元素
               div({ node, children }) {
                 const { className, style, ...rest } = node?.properties || {};
                 const _className = cls(node?.properties?.className || []);
                 const _style = parseStyleString(node?.properties?.style as string || "");
+                // console.log('div=> ', node);
                 return <div className={_className} style={_style} {...rest} {...addPositionAttributes(node)}>{children}</div>;
               },
             }}

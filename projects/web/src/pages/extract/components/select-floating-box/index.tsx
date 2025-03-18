@@ -92,7 +92,8 @@ const SelectFloatingBox: React.FC<{
                     leftPos = window.innerWidth - menuWidth - 10;
                 }
 
-                console.log('handleSelection=> ', range, "selectedText=>", range.startContainer.textContent?.slice(range.startOffset, range.endOffset));
+                const selection = window.getSelection();
+                console.log('handleSelection=> ', selection, range, "ssliceText=>", range.startContainer.textContent?.slice(range.startOffset, range.endOffset));
 
                 const mdContainer = document.getElementById("preview-container");
 
@@ -113,27 +114,43 @@ const SelectFloatingBox: React.FC<{
 
                 const position: MarkdownPosition = {
                     startLine: 0,
-                    startColumn: 0,
+                    startColumn: -1,
                     startOffset: 0,
                     endLine: 0,
-                    endColumn: 0,
+                    endColumn: -1,
                     endOffset: 0,
                 };
 
                 // startContainer向上遍历，直到找到key
                 let startElement = range.startContainer as HTMLElement;
+                // 先开始向前遍历，直到找到有data-start-line属性的元素，如果找不到，则继续向上遍历，直到mdContainer元素为止
                 while (!startElement?.dataset || !startElement?.dataset.startLine) {
-                    startElement = startElement.parentElement!;
+                    // while (startElement.parentElement != mdContainer) {
+                    // 选择文本在span标签中后，则需要将startColumn设置为span标签的endColumn+1 
+                    if (startElement.nextElementSibling) {
+                        startElement = startElement.nextElementSibling as HTMLElement;
+                        if (startElement?.dataset.startColumn) {
+                            position.startColumn = parseInt(startElement.dataset.startColumn || '0') - ((range.startContainer?.textContent?.length || 0) - range.startOffset) - 1;
+                        }
+                    } else {
+                        startElement = startElement.parentElement!;
+                    }
                 }
 
                 console.log('startElement=> ', startElement);
-                if (startElement.dataset && startElement.dataset.startLine) {
+
+                if (startElement.dataset && startElement.dataset.startLine && startElement.dataset.startColumn) {
                     // 如果是h1-h6标签，则startColumn需要+2
-                    if (startElement.tagName === 'H1' || startElement.tagName === 'H2' || startElement.tagName === 'H3' || startElement.tagName === 'H4' || startElement.tagName === 'H5' || startElement.tagName === 'H6') {
-                        position.startColumn = range.startOffset + 2;
-                    } else {
-                        position.startColumn = range.startOffset;
+                    if (position.startColumn === -1) {
+                        if (startElement.tagName === 'H1' || startElement.tagName === 'H2' || startElement.tagName === 'H3' || startElement.tagName === 'H4' || startElement.tagName === 'H5' || startElement.tagName === 'H6') {
+                            position.startColumn = range.startOffset + 2;
+                        } else if (startElement.tagName === 'SPAN') {
+                            position.startColumn = parseInt(startElement.dataset.startColumn || '0') - 1;
+                        } else {
+                            position.startColumn = range.startOffset;
+                        }
                     }
+
                     position.startLine = parseInt(startElement.dataset.startLine || '0');
                     // position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
                     position.startOffset = parseInt(startElement.dataset.startOffset || '0');
@@ -149,18 +166,25 @@ const SelectFloatingBox: React.FC<{
                 }
 
                 let endElement = range.endContainer as HTMLElement;
+                // 先开始向前遍历，直到找到有data-start-line属性的元素，如果找不到，则继续向上遍历，直到mdContainer元素为止
                 while (!endElement?.dataset || !endElement?.dataset.endLine) {
-                    endElement = endElement.parentElement!;
+                    // while (endElement.parentElement != mdContainer) {
+                    if (endElement.previousElementSibling) {
+                        endElement = endElement.previousElementSibling as HTMLElement;
+                        if (endElement?.dataset.endColumn) {
+                            position.endColumn = parseInt(endElement.dataset.endColumn || '0') + range.endOffset - 1;
+                        }
+                    } else {
+                        endElement = endElement.parentElement!;
+                    }
                 }
-
                 console.log('endElement=> ', endElement);
 
-                if (endElement.dataset && endElement.dataset.endLine) {
-                    if (endElement.tagName === 'H1' || endElement.tagName === 'H2' || endElement.tagName === 'H3' || endElement.tagName === 'H4' || endElement.tagName === 'H5' || endElement.tagName === 'H6') {
-                        position.endColumn = range.endOffset + 2;
-                    } else {
-                        position.endColumn = range.endOffset;
+                if (endElement.dataset && endElement.dataset.endLine && endElement.dataset.endColumn) {
+                    if (position.endColumn === -1) {
+                        position.endColumn = parseInt(endElement.dataset.startColumn || '0') + range.endOffset -1;
                     }
+
                     position.endLine = parseInt(endElement.dataset.endLine || '0');
                     // position.endColumn = parseInt(endElement.dataset.endColumn || '0') ;
                     position.endOffset = parseInt(endElement.dataset.endOffset || '0');
@@ -171,6 +195,7 @@ const SelectFloatingBox: React.FC<{
                         placement: "bottomRight",
                         showProgress: true,
                     });
+                    // }
                 }
 
                 console.log('position=> ', position);

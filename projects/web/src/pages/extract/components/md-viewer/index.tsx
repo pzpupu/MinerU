@@ -146,11 +146,11 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     statusRef?.current?.reset();
   }, [taskInfo?.markdownUrl, params?.jobID]);
 
-  const handleContentChange = (val: string, index: number) => {
-    setAllMdContent(val);
+  const handleContentChange = (val: string) => {
+    // setAllMdContent(val);
     statusRef?.current?.triggerSave();
     if (taskInfo?.file_key) {
-      updateMdContent(taskInfo.file_key!, index, val);
+      updateFullMdContent(taskInfo.file_key!, val);
     }
   };
 
@@ -278,8 +278,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
           // const endRegex = new RegExp(`</div meta-id="${uniqueId}">`, 'g');
           // lines[startLineIndex] = lines[startLineIndex].replace(startRegex, '');
           // lines[endLineIndex] = lines[endLineIndex].replace(endRegex, '');
-          lines.splice(endLineIndex-1, endLineIndex);
-          lines.splice(startLineIndex-1, startLineIndex+1);
+          delete lines[endLineIndex];
+          delete lines[startLineIndex];
         }
 
         const newMdContent = lines.join('\n');
@@ -419,7 +419,17 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         <div
           className={cls(getVisibleFromType(displayType, MD_PREVIEW_TYPE.code))}
         >
-          {taskInfo?.markdownUrl?.map((url: string, index: number) => {
+          <div key={url} className="opacity-1 z-[-1]">
+            <CodeMirror
+              value={allMdContent}
+              lineWrapping={lineWrap}
+              onChange={(val) => handleContentChange(val)}
+              editable
+              className="w-full h-full"
+                />
+              </div>
+
+          {/* {taskInfo?.markdownUrl?.map((url: string, index: number) => {
             const md = mdContents[url]?.content || "";
             if (!md) return null;
             return (
@@ -433,7 +443,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
                 />
               </div>
             );
-          })}
+          })} */}
         </div>
       </div>
     </div>
