@@ -18,6 +18,7 @@ import useMdStore from "@/store/mdStore";
 import CodeMirror from "@/components/code-mirror";
 import { useParams } from "react-router-dom";
 import SaveStatus, { SaveStatusRef } from "@/components/SaveStatus";
+import { MarkdownPosition } from "../select-floating-box";
 
 interface IMdViewerProps {
   md?: string;
@@ -50,6 +51,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     setMdUrlArr,
     mdContents,
     updateMdContent,
+    updateMdContents,
   } = useMdStore();
   const [lineWrap, setLineWrap] = useState(false);
 
@@ -150,44 +152,159 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   };
 
   // 处理文本高亮
-  const handleMark = (color: string) => {
-    if (taskInfo?.file_key) {
+  const handleMark = (color: string, markdownPosition: MarkdownPosition) => {
+    if (taskInfo?.file_key && markdownPosition) {
       statusRef?.current?.triggerSave();
-      const pageIndex = curPage - 1;
-      const urls = Object.keys(mdContents);
-      const url = urls[pageIndex];
-      // 提示
-      if (pageIndex >= urls.length) {
-        message.info("Invalid page index");
-        throw new Error("Invalid page index");
+
+      console.log('handleHighlight=> ', window.getSelection(), 'markdownPosition=>', markdownPosition);
+
+      try {
+        // 根据markdownPosition获取开始和结束的文件
+        const startFile = markdownPosition.startKey;
+        const endFile = markdownPosition.endKey;
+
+        const updateData: Record<string, string> = {};
+
+        // 同文件处理
+        if (startFile == endFile) {
+          // 获取当前文件的Markdown内容
+          const content = mdContents[startFile]?.content || "";
+          // 将内容分割成行
+          let lines = content.split('\n');
+
+          // 确保行号在有效范围内
+          if (markdownPosition.startLine && markdownPosition.endLine &&
+            markdownPosition.startLine <= lines.length &&
+            markdownPosition.endLine <= lines.length) {
+
+            const startLineIndex = markdownPosition.startLine - 1;
+            const endLineIndex = markdownPosition.endLine - 1;
+
+            // 处理单行段落
+            if (startLineIndex === endLineIndex) {
+              const line = lines[startLineIndex];
+
+              const startCol = markdownPosition.startColumn;
+              const endCol = markdownPosition.endColumn;
+              // 在startCol指定位置插入"<div style="background-color:${color};">"高亮标记
+              // 生成唯一id
+              const uniqueId = `${startLineIndex}-${startCol}-${endCol}`;
+              lines[startLineIndex] = `${line.substring(0, startCol)}\n\n<div style="background-color:${color};" meta-id="${uniqueId}">${line.substring(startCol, endCol)}</div meta-id="${uniqueId}">\n\n${line.substring(endCol)}`;
+              console.log(`lines[${startLineIndex}]=> `, lines[startLineIndex]);
+            } else {
+              // 处理多行段落
+              const startCol = markdownPosition.startColumn;
+              const endCol = markdownPosition.endColumn;
+              const uniqueId = `${startLineIndex}-${endLineIndex}-${startCol}-${endCol}`;
+
+              // 处理第一行
+              if (startLineIndex >= 0 && startLineIndex < lines.length) {
+                const firstLine = lines[startLineIndex];
+                if (startCol >= 0 && startCol <= firstLine.length) {
+                  // 添加高亮标记开始
+                  lines[startLineIndex] = firstLine.substring(0, startCol) +
+                    `\n\n<div style="background-color:${color};" meta-id="${uniqueId}">\n\n` +
+                    firstLine.substring(startCol);
+                }
+              }
+
+              // 处理最后一行
+              if (endLineIndex >= 0 && endLineIndex < lines.length) {
+                const lastLine = lines[endLineIndex];
+                if (endCol >= 0 && endCol <= lastLine.length) {
+                  // 添加高亮标记结束
+                  lines[endLineIndex] = lastLine.substring(0, endCol) +
+                    `\n\n</div meta-id="${uniqueId}">\n\n` +
+                    lastLine.substring(endCol);
+                }
+              }
+            }
+          }
+          Object.keys(mdContents).forEach((key, index) => {
+            if (key === startFile) {
+              updateData[index] = lines.join('\n');
+              return;
+            }
+          });
+          
+        } else {
+          // 跨文件处理
+          const startContent = mdContents[startFile]?.content || "";
+          const endContent = mdContents[endFile]?.content || "";
+
+          const startLineIndex = markdownPosition.startLine - 1;
+          const startCol = markdownPosition.startColumn;
+          const endLineIndex = markdownPosition.endLine - 1;
+          const endCol = markdownPosition.endColumn;
+          const uniqueId = `${startFile}-${endFile}-${startCol}-${endCol}`;
+
+          // 根据位置添加开始标记
+          const startContents = startContent.split('\n');
+
+          if (startLineIndex >= 0 && startLineIndex < startContents.length) {
+            startContents[startLineIndex] = startContents[startLineIndex].substring(0, startCol) +
+              `\n<div style="background-color:${color};" meta-id="${uniqueId}">\n` +
+              startContents[startLineIndex].substring(startCol);
+          }
+          Object.keys(mdContents).forEach((key, index) => {
+            if (key === startFile) {
+              updateData[index] = startContents.join('\n');
+              return;
+            }
+          });
+
+          // 根据位置添加结束标记
+          const endContents = endContent.split('\n');
+          if (endLineIndex >= 0 && endLineIndex < endContents.length) {
+            endContents[endLineIndex] = endContents[endLineIndex].substring(0, endCol) +
+              `\n</div meta-id="${uniqueId}">\n` +
+              endContents[endLineIndex].substring(endCol);
+          }
+          Object.keys(mdContents).forEach((key, index) => {
+            if (key === endFile) {
+              updateData[index] = endContents.join('\n');
+              return;
+            }
+          });
+        }
+
+
+        updateMdContents(taskInfo.file_key!, updateData).then((result: boolean) => {
+          if (result) {
+            notification.success({
+              message: "高亮成功",
+              placement: "bottomRight",
+              showProgress: true,
+              duration: 2,
+            });
+          }
+        }).catch((error: Error) => {
+          notification.error({
+            message: "高亮更新失败",
+            description: error.message,
+            placement: "bottomRight",
+            showProgress: true,
+            duration: 2,
+          });
+        });
+      } catch (error) {
+        console.error("高亮处理错误:", error);
+        notification.error({
+          message: "高亮处理错误",
+          description: (error as Error).message,
+          placement: "bottomRight",
+          showProgress: true,
+          duration: 2,
+        });
       }
-      console.log('handleHighlight=> ', window.getSelection());
-      const content = mdContents[url]?.content || "";
-       // 创建高亮标记，添加自定义类名以便于样式控制
-      // const highlightedText = `<mark style="background-color:${color}; border-radius: 2px;">${text}</mark>`;
-    // 查找精确的文本位置
-      // 如果提供的范围不准确，尝试在内容中查找文本
-   
-
-      // setAllMdContent(newContent);
-
-      // 更新内容
-      // updateMdContent(taskInfo.file_key, pageIndex, newContent)
-      // .then(() => {
-      //   notification.success({
-      //     message: "高亮成功",
-      //     placement: "bottomRight",
-      //     showProgress: true,
-      //   });
-      // })
-      // .catch((err) => {
-      //   notification.error({
-      //     message: "高亮失败",
-      //     description: err.message,
-      //     placement: "bottomRight",
-      //     showProgress: true,
-      //   });
-      // })
+    } else {
+      notification.warning({
+        message: "缺少位置信息",
+        description: "无法确定文本在Markdown中的位置",
+        placement: "bottomRight",
+        showProgress: true,
+        duration: 2,
+      });
     }
   };
 
@@ -204,9 +321,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
           {menuList.map((item) => (
             <li
               key={item.code}
-              className={`mx-[0.125rem] px-2 leading-[25px] inline-block rounded-sm text-[14px] cursor-pointer  text-color ${
-                displayType === item.code && "bg-white text-primary"
-              }`}
+              className={`mx-[0.125rem] px-2 leading-[25px] inline-block rounded-sm text-[14px] cursor-pointer  text-color ${displayType === item.code && "bg-white text-primary"
+                }`}
               onClick={() => setDisplayType(item.code)}
             >
               {item.name}
@@ -222,8 +338,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
                 fullScreen
                   ? formatMessage({ id: "extractor.button.lineWrap" })
                   : formatMessage({
-                      id: "extractor.button.lineWrap",
-                    })
+                    id: "extractor.button.lineWrap",
+                  })
               }
             >
               <IconFont
@@ -243,8 +359,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
             fullScreen
               ? formatMessage({ id: "extractor.button.exitFullScreen" })
               : formatMessage({
-                  id: "extractor.button.fullScreen",
-                })
+                id: "extractor.button.fullScreen",
+              })
           }
         >
           <span
@@ -284,7 +400,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
           styles.scrollBar
         )}
         id="md-container"
-        // ref={containerRef}
+      // ref={containerRef}
       >
         <div
           className={cls(

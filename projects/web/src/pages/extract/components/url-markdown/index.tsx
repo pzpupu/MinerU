@@ -8,14 +8,13 @@ import styles from "./index.module.scss";
 import cls from "classnames";
 import { MdContent } from "@/store/mdStore";
 import { useRef } from "react";
-import SelectFloatingBox from "../select-floating-box";
-
+import SelectFloatingBox, { MarkdownPosition } from "../select-floating-box";
 
 interface IMarkdownProps {
   content: Record<string, MdContent>;
   markdownClass?: string;
   markdownId?: string;
-  onMark?: (color: string) => void;
+  onMark?: (color: string, markdownPosition: MarkdownPosition) => void;
 }
 
 const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
@@ -25,24 +24,38 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  function parseStyleString(styleString: string) {
-    const styleObject: Record<string, string> = {};
-    const declarations = styleString.split(";").filter(Boolean);
+  // function parseStyleString(styleString: string) {
+  //   const styleObject: Record<string, string> = {};
+  //   const declarations = styleString.split(";").filter(Boolean);
 
-    declarations.forEach((declaration) => {
-      const [property, value] = declaration.split(":").map((str) => str.trim());
-      if (property && value) {
-        const camelCaseProperty = property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-        styleObject[camelCaseProperty] = value;
-      }
-    });
+  //   declarations.forEach((declaration) => {
+  //     const [property, value] = declaration.split(":").map((str) => str.trim());
+  //     if (property && value) {
+  //       const camelCaseProperty = property.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+  //       styleObject[camelCaseProperty] = value;
+  //     }
+  //   });
 
-    return styleObject;
-  }
+  //   return styleObject;
+  // }
+
+  // 添加位置信息属性到元素
+  const addPositionAttributes = (node: any, key: string) => {
+    const { start, end } = node?.position || {};
+    return {
+      'data-key': key,
+      'data-start-line': start?.line,
+      'data-start-column': start?.column,
+      'data-start-offset': start?.offset,
+      'data-end-line': end?.line,
+      'data-end-column': end?.column,
+      'data-end-offset': end?.offset
+    };
+  };
 
   return (
     <div className="min-h-[100px]">
-      <div ref={ref} className={cls(styles.mdViewerWrap, "bg-white text-[0.75rem]", markdownClass)}>
+      <div ref={ref} className={cls(styles.mdViewerWrap, "bg-white text-[0.75rem]", markdownClass)} id="preview-container">
         {Object.keys(content).map((key) => (
           <ReactMarkdown
             key={key}
@@ -62,58 +75,99 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
                     // eslint-disable-next-line react/no-children-prop
                     children={String(children).replace(/\n$/, "")}
                     language={match[1]}
+                    {...addPositionAttributes(node, key)}
                   />
                 ) : (
                   <code
                     {...rest}
                     className="p-4 my-2 bg-[#f6f8fa] !bg-black rounded-md block"
+                    {...addPositionAttributes(node, key)}
                   >
                     {children}
                   </code>
                 );
               },
               h1({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <h1 {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</h1>;
+                return <h1 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h1>;
               },
               h2({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <h2 {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</h2>;
+                return <h2 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h2>;
               },
               h3({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <h3 {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</h3>;
+                return <h3 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h3>;
               },
               h4({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <h4 {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</h4>;
+                return <h4 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h4>;
               },
               h5({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <h5 {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</h5>;
+                return <h5 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h5>;
               },
               h6({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <h6 {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</h6>;
+                return <h6 {...node?.properties} {...addPositionAttributes(node, key)}>{children}</h6>;
               },
               p({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <p {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</p>;
+                return <p {...node?.properties} {...addPositionAttributes(node, key)}>{children}</p>;
               },
               li({ node, children }) {
-                const { start, end } = node?.position || {};
-                return <li {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</li>;
-              },
-              span({ node, children }) {
-                const { start, end } = node?.position || {};
-                const className = cls(node?.properties?.className || []);
-                const style = parseStyleString(node?.properties?.style as string || "");
-                return <span className={className} style={style} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} >{children}</span>;
+                return <li {...node?.properties} {...addPositionAttributes(node, key)}>{children}</li>;
               },
               img({ node }) {
-                const { start, end } = node?.position || {};
-                return <img {...node?.properties} data-key={key} data-start-line={start?.line} data-start-column={start?.column} data-start-offset={start?.offset} data-end-line={end?.line} data-end-column={end?.column} data-end-offset={end?.offset} />;
+                return <img {...node?.properties} {...addPositionAttributes(node, key)} />;
               },
+              a({ node, children }) {
+                return <a {...node?.properties} {...addPositionAttributes(node, key)}>{children}</a>;
+              },
+              // span({ node, children }) {
+              //   const className = cls(node?.properties?.className || []);
+              //   const style = parseStyleString(node?.properties?.style as string || "");
+              //   return <span className={className} style={style} {...addPositionAttributes(node, key)}>{children}</span>;
+              // },
+              // blockquote({ node, children }) {
+              //   return <blockquote {...node?.properties} {...addPositionAttributes(node, key)}>{children}</blockquote>;
+              // },
+              // strong({ node, children }) {
+              //   return <strong {...node?.properties} {...addPositionAttributes(node, key)}>{children}</strong>;
+              // },
+              // em({ node, children }) {
+              //   return <em {...node?.properties} {...addPositionAttributes(node, key)}>{children}</em>;
+              // },
+              // del({ node, children }) {
+              //   return <del {...node?.properties} {...addPositionAttributes(node, key)}>{children}</del>;
+              // },
+              // table({ node, children }) {
+              //   return <table {...node?.properties} {...addPositionAttributes(node, key)}>{children}</table>;
+              // },
+              // thead({ node, children }) {
+              //   return <thead {...node?.properties} {...addPositionAttributes(node, key)}>{children}</thead>;
+              // },
+              // tbody({ node, children }) {
+              //   return <tbody {...node?.properties} {...addPositionAttributes(node, key)}>{children}</tbody>;
+              // },
+              // tr({ node, children }) {
+              //   return <tr {...node?.properties} {...addPositionAttributes(node, key)}>{children}</tr>;
+              // },
+              // td({ node, children }) {
+              //   return <td {...node?.properties} {...addPositionAttributes(node, key)}>{children}</td>;
+              // },
+              // th({ node, children }) {
+              //   return <th {...node?.properties} {...addPositionAttributes(node, key)}>{children}</th>;
+              // },
+              // ul({ node, children }) {
+              //   return <ul {...node?.properties} {...addPositionAttributes(node, key)}>{children}</ul>;
+              // },
+              // ol({ node, children }) {
+              //   return <ol {...node?.properties} {...addPositionAttributes(node, key)}>{children}</ol>;
+              // },
+              // pre({ node, children }) {
+              //   return <pre {...node?.properties} {...addPositionAttributes(node, key)}>{children}</pre>;
+              // },
+              // hr({ node }) {
+              //   return <hr {...node?.properties} {...addPositionAttributes(node, key)} />;
+              // },
+              // // 默认处理所有其他元素
+              // div({ node, children }) {
+              //   return <div {...node?.properties} {...addPositionAttributes(node, key)}>{children}</div>;
+              // },
             }}
           >
             {content[key].content}

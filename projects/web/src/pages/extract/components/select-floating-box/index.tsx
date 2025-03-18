@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./index.module.scss";
-
+import { notification } from "antd";
 
 // 定义高亮菜单样式类型
 interface MarkMenuStyle {
@@ -18,16 +18,33 @@ const MARK_COLORS = [
     { color: "#2196F3", bgColor: "#2196F333", name: "答案" },
 ];
 
-const SelectFloatingBox: React.FC<{ htmlRef?: React.RefObject<HTMLDivElement>, onMark?: (color: string) => void }> = ({ htmlRef, onMark }) => {
+// 定义Markdown位置信息接口
+export interface MarkdownPosition {
+    startKey: string;
+    startLine: number;
+    startColumn: number;
+    startOffset: number;
+    endKey: string;
+    endLine: number;
+    endColumn: number;
+    endOffset: number;
+}
 
-    const [selection, setSelection] = useState<{
-        text: string;
-        range?: Range;
-        position: { x: number; y: number } | null;
-    }>({
-        text: "",
+// 定义选择信息接口
+export interface SelectionInfo {
+    range?: Range;
+    // 存储选择范围内的所有Markdown段落信息
+    markdownPosition?: MarkdownPosition;
+}
+
+const SelectFloatingBox: React.FC<{
+    htmlRef?: React.RefObject<HTMLDivElement>,
+    onMark?: (color: string, markdownPosition: MarkdownPosition) => void
+}> = ({ htmlRef, onMark }) => {
+
+    const [selection, setSelection] = useState<SelectionInfo>({
         range: undefined,
-        position: null,
+        markdownPosition: undefined
     });
 
     const [markMenuStyle, setMarkMenuStyle] = useState<MarkMenuStyle>({
@@ -48,9 +65,8 @@ const SelectFloatingBox: React.FC<{ htmlRef?: React.RefObject<HTMLDivElement>, o
             }
 
             const range = selection.getRangeAt(0);
-            const selectedText = selection.toString().trim();
 
-            if (selectedText && htmlRef?.current.contains(selection.anchorNode)) {
+            if (htmlRef?.current.contains(selection.anchorNode)) {
                 // 获取选择文本的位置，用于显示悬浮框
                 const rect = range.getBoundingClientRect();
 
@@ -64,7 +80,70 @@ const SelectFloatingBox: React.FC<{ htmlRef?: React.RefObject<HTMLDivElement>, o
                     leftPos = window.innerWidth - menuWidth - 10;
                 }
 
-                console.log('selected=> ', selection);
+                console.log('handleSelection=> ',range,"selectedText=>",range.startContainer.textContent?.slice(range.startOffset, range.endOffset));
+
+                // 获取选择范围内的Markdown段落
+                if (!selection || selection.rangeCount === 0) return [];
+
+                const mdContainer = document.getElementById("preview-container");
+                const position: MarkdownPosition = {
+                    startKey: '',
+                    startLine: 0,
+                    startColumn: 0,
+                    startOffset: 0,
+                    endKey: '',
+                    endLine: 0,
+                    endColumn: 0,
+                    endOffset: 0,
+                };
+
+                // startContainer向上遍历，直到找到commonAncestorContainer的子元素
+                let startElement = range.startContainer as HTMLElement;
+                while (startElement.parentElement != mdContainer) {
+                    startElement = startElement.parentElement!;
+                }
+
+                console.log('startElement=> ', startElement);
+                if (startElement.dataset) {
+                    position.startKey = startElement.dataset.key || '';
+                    position.startLine = parseInt(startElement.dataset.startLine || '0');
+                    // position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
+                    position.startColumn = range.startOffset;
+                    position.startOffset = parseInt(startElement.dataset.startOffset || '0');
+                } else {
+                    notification.error({
+                        message: "无法从当前开始元素获取位置信息",
+                        description: "请选择其它非公式内容",
+                        placement: "bottomRight",
+                        showProgress: true,
+                        duration: 32,
+                    });
+                    return;
+                }
+
+                let endElement = range.endContainer as HTMLElement;
+                while (endElement.parentElement != mdContainer) {
+                    endElement = endElement.parentElement!;
+                }
+
+                console.log('endElement=> ', endElement);
+
+                if (endElement.dataset) {
+                    position.endKey = endElement.dataset.key || '';
+                    position.endLine = parseInt(endElement.dataset.endLine || '0');
+                    // position.endColumn = parseInt(endElement.dataset.endColumn || '0') ;
+                    position.endColumn = range.endOffset;
+                    position.endOffset = parseInt(endElement.dataset.endOffset || '0');
+                } else {
+                    notification.error({
+                        message: "无法从当前结束元素获取位置信息",
+                        description: "请选择其它非公式内容",
+                        placement: "bottomRight",
+                        showProgress: true,
+                    });
+                }
+
+                console.log('position=> ', position);
 
                 // 设置悬浮菜单的位置
                 setMarkMenuStyle({
@@ -76,14 +155,10 @@ const SelectFloatingBox: React.FC<{ htmlRef?: React.RefObject<HTMLDivElement>, o
                 });
 
                 setSelection({
-                    text: selectedText,
                     range: range,
-                    position: {
-                        x: rect.left + rect.width / 2,
-                        y: rect.top,
-                    },
+                    markdownPosition: position
                 });
-                
+
             } else {
                 setMarkMenuStyle(prev => ({ ...prev, display: 'none' }));
             }
@@ -93,13 +168,13 @@ const SelectFloatingBox: React.FC<{ htmlRef?: React.RefObject<HTMLDivElement>, o
         return () => {
             document.removeEventListener("mouseup", handleSelection);
         };
-    }, []);
+    }, [htmlRef]);
 
     // 处理高亮操作
     const handleMark = (color: string) => {
-        if (selection.text && selection.range && onMark) {
-            console.log('onMark=> ', window.getSelection());
-            onMark(color);
+        if (selection.markdownPosition && selection.range && onMark) {
+            console.log('onMark=> ', selection);
+            onMark(color, selection.markdownPosition);
         }
     };
 

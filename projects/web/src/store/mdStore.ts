@@ -1,7 +1,7 @@
 // mdStore.ts
 import { create } from "zustand";
 import axios from "axios";
-import { updateMarkdownContent, UpdateMarkdownRequest } from "@/api/extract"; // 确保路径正确
+import { updateMarkdownContent, UpdateMarkdownRequest, UpdateMarkdownResponse } from "@/api/extract"; // 确保路径正确
 import { devtools } from 'zustand/middleware'
 export interface MdContent {
   content: string;
@@ -54,6 +54,10 @@ interface MdState {
     pageNumber: string | number,
     newContent: string
   ) => Promise<void>;
+  updateMdContents: (
+    fileKey: string,
+    data: Record<string, string>
+  ) => Promise<boolean>;
 }
 
 const MAX_CONCURRENT_REQUESTS = 2;
@@ -144,7 +148,7 @@ const useMdStore = create<MdState>()(devtools(
         results.forEach(([url, content]) => {
           newMdContents[url] = { content, isLoading: false };
         });
-        
+
         set((state) => ({
           mdContents: newMdContents,
           allMdContent: state.getAllMdContent(results.map((i) => i[1])),
@@ -207,7 +211,6 @@ const useMdStore = create<MdState>()(devtools(
       }
       return -1; // Anchor not found
     },
-
     updateMdContent: async (
       fileKey: string,
       pageNumber: string | number,
@@ -232,7 +235,7 @@ const useMdStore = create<MdState>()(devtools(
                 ...updatedMdContents[fileKey],
                 content: newContent,
               };
-            }else{
+            } else {
               const pageNumber_ = Number(pageNumber);
               const url = Object.keys(state.mdContents)[pageNumber_];
               updatedMdContents[url] = {
@@ -240,7 +243,7 @@ const useMdStore = create<MdState>()(devtools(
                 content: newContent,
               };
             }
-           
+
             // 重新计算 allMdContent 和 allMdContentWithAnchor
             const contentArray = Object.values(updatedMdContents).map(
               (content) => content.content
@@ -258,6 +261,39 @@ const useMdStore = create<MdState>()(devtools(
         } else {
           throw new Error("Failed to update Markdown content");
         }
+      } catch (error) {
+        set({ error: error as Error });
+        throw error;
+      }
+    },
+    updateMdContents: async (fileKey: string, data: Record<string, string>) => {
+      try {
+        const params: UpdateMarkdownRequest = {
+          file_key: fileKey,
+          data: data,
+        };
+
+        const result = await updateMarkdownContent(params);
+
+        if (result && result.success) {
+          // 更新本地状态
+          set((state) => {
+            const updatedMdContents = { ...state.mdContents };
+            Object.entries(data).forEach(([key, newContent]) => {
+              updatedMdContents[key] = {
+                ...updatedMdContents[key], 
+                content: newContent,
+              };
+            });
+
+            return {
+              mdContents: updatedMdContents,
+            };
+          });
+
+          return true;
+        }
+        throw new Error("Failed to update Markdown content");
       } catch (error) {
         set({ error: error as Error });
         throw error;
