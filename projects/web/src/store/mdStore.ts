@@ -269,7 +269,6 @@ const useMdStore = create<MdState>()(devtools(
     updateMdContents: async (fileKey: string, data: Record<string, string>) => {
       try {
         const newData: Record<string, string> = {};
-        debugger
         Object.keys(get().mdContents).forEach((key, index) => {
           Object.keys(data).forEach((item) => {
             if (key === item) {

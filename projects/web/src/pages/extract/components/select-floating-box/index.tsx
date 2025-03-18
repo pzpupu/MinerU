@@ -30,6 +30,17 @@ export interface MarkdownPosition {
     endOffset: number;
 }
 
+export interface DeleteMarkInfo {
+    metaId: string;
+    key: string;
+    startLine: number;
+    startColumn: number;
+    startOffset: number;
+    endLine: number;
+    endColumn: number;
+    endOffset: number;
+}
+
 // 定义选择信息接口
 export interface SelectionInfo {
     range?: Range;
@@ -39,8 +50,9 @@ export interface SelectionInfo {
 
 const SelectFloatingBox: React.FC<{
     htmlRef?: React.RefObject<HTMLDivElement>,
-    onMark?: (color: string, markdownPosition: MarkdownPosition) => void
-}> = ({ htmlRef, onMark }) => {
+    onMark?: (color: string, markdownPosition: MarkdownPosition) => void,
+    onDeleteMark?: (deleteMarkInfo: DeleteMarkInfo) => void
+}> = ({ htmlRef, onMark, onDeleteMark }) => {
 
     const [selection, setSelection] = useState<SelectionInfo>({
         range: undefined,
@@ -54,6 +66,9 @@ const SelectFloatingBox: React.FC<{
         display: 'none',
         zIndex: 1050,
     });
+
+    // 上级标记的DIV
+    const [markDiv, setMarkDiv] = useState<HTMLDivElement | null>(null);
 
     // 处理文本选择事件
     useEffect(() => {
@@ -80,12 +95,25 @@ const SelectFloatingBox: React.FC<{
                     leftPos = window.innerWidth - menuWidth - 10;
                 }
 
-                console.log('handleSelection=> ',range,"selectedText=>",range.startContainer.textContent?.slice(range.startOffset, range.endOffset));
+                console.log('handleSelection=> ', range, "selectedText=>", range.startContainer.textContent?.slice(range.startOffset, range.endOffset));
+
+                const mdContainer = document.getElementById("preview-container");
+
+                // commonAncestorContainer向上遍历，尝试寻找div标签有meta-id属性的元素，直到mdContainer元素为止
+                let parentMarkElement = range.commonAncestorContainer as HTMLElement;
+                while (parentMarkElement !== mdContainer && parentMarkElement.tagName !== 'DIV') {
+                    parentMarkElement = parentMarkElement.parentElement!;
+                }
+
+                if (parentMarkElement.tagName === 'DIV' && parentMarkElement.getAttribute('meta-id')) {
+                    setMarkDiv(parentMarkElement as HTMLDivElement);
+                    console.log('MarkDiv=> ', parentMarkElement, parentMarkElement.getAttribute('meta-id'));
+                }
 
                 // 获取选择范围内的Markdown段落
                 if (!selection || selection.rangeCount === 0) return [];
 
-                const mdContainer = document.getElementById("preview-container");
+
                 const position: MarkdownPosition = {
                     startKey: '',
                     startLine: 0,
@@ -97,9 +125,9 @@ const SelectFloatingBox: React.FC<{
                     endOffset: 0,
                 };
 
-                // startContainer向上遍历，直到找到commonAncestorContainer的子元素
+                // startContainer向上遍历，直到找到key
                 let startElement = range.startContainer as HTMLElement;
-                while (startElement.parentElement != mdContainer) {
+                while (!startElement.dataset || !startElement.dataset.key) {
                     startElement = startElement.parentElement!;
                 }
 
@@ -122,7 +150,7 @@ const SelectFloatingBox: React.FC<{
                 }
 
                 let endElement = range.endContainer as HTMLElement;
-                while (endElement.parentElement != mdContainer) {
+                while (!endElement.dataset || !endElement.dataset.key) {
                     endElement = endElement.parentElement!;
                 }
 
@@ -178,6 +206,26 @@ const SelectFloatingBox: React.FC<{
         }
     };
 
+    // 处理删除操作
+    const handleDeleteMark = () => {
+        if (markDiv) {
+            const metaId = markDiv.getAttribute('meta-id') || '';
+            const dataset = markDiv.dataset;
+            const deleteMarkInfo: DeleteMarkInfo = {
+                metaId: metaId,
+                startKey: dataset?.startKey || '',
+                startLine: parseInt(dataset?.startLine || '0'),
+                startColumn: parseInt(dataset?.startColumn || '0'),
+                startOffset: parseInt(dataset?.startOffset || '0'),
+                endKey: dataset?.endKey || '',
+                endLine: parseInt(dataset?.endLine || '0'),
+                endColumn: parseInt(dataset?.endColumn || '0'),
+                endOffset: parseInt(dataset?.endOffset || '0'),
+            };
+            onDeleteMark(deleteMarkInfo);
+        }
+    };
+
     /* 直接渲染高亮选择器，通过CSS控制显示/隐藏 */
     return <div
         className={styles.markMenu}
@@ -194,6 +242,13 @@ const SelectFloatingBox: React.FC<{
                     <span style={{ color: item.color, fontWeight: 'bold' }}>{item.name}</span>
                 </div>
             ))}
+            {/* markDiv存在时，显示删除按钮 */}
+            {markDiv && (
+                <div className="ml-2 px-2 py-1 rounded cursor-pointer hover:opacity-80 transition-all duration-200 flex items-center"
+                    onClick={() => handleDeleteMark()}>
+                    <span style={{ color: '#F44336', fontWeight: 'bold' }}>删除</span>
+                </div>
+            )}
         </div>
     </div>;
 };

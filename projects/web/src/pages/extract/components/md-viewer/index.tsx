@@ -18,7 +18,7 @@ import useMdStore from "@/store/mdStore";
 import CodeMirror from "@/components/code-mirror";
 import { useParams } from "react-router-dom";
 import SaveStatus, { SaveStatusRef } from "@/components/SaveStatus";
-import { MarkdownPosition } from "../select-floating-box";
+import { DeleteMarkInfo, MarkdownPosition } from "../select-floating-box";
 
 interface IMdViewerProps {
   md?: string;
@@ -295,6 +295,18 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     }
   };
 
+  // 处理删除高亮
+  const handleDeleteMark = (deleteMarkInfo: DeleteMarkInfo) => {
+    if (taskInfo?.file_key && deleteMarkInfo) {
+      statusRef?.current?.triggerSave();
+
+      // 
+      updateMdContents(taskInfo.file_key!, {
+        [deleteMarkInfo.startKey]: deleteMarkInfo.startKey,
+      });
+    }
+  };
+
   // console.log('md-viewer=> ', {curPage});
 
   return (
@@ -398,6 +410,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
             markdownClass={"relative"}
             content={mdContents}
             onMark={handleMark}
+            onDeleteMark={handleDeleteMark}
           />
         </div>
         <div

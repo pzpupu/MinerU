@@ -8,19 +8,21 @@ import styles from "./index.module.scss";
 import cls from "classnames";
 import { MdContent } from "@/store/mdStore";
 import { useRef } from "react";
-import SelectFloatingBox, { MarkdownPosition } from "../select-floating-box";
+import SelectFloatingBox, { DeleteMarkInfo, MarkdownPosition } from "../select-floating-box";
 
 interface IMarkdownProps {
   content: Record<string, MdContent>;
   markdownClass?: string;
   markdownId?: string;
   onMark?: (color: string, markdownPosition: MarkdownPosition) => void;
+  onDeleteMark?: (deleteMarkInfo: DeleteMarkInfo) => void;
 }
 
 const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
   content,
   markdownClass = "",
   onMark: onMark,
+  onDeleteMark: onDeleteMark
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -169,9 +171,10 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
               },
               // // 默认处理所有其他元素
               div({ node, children }) {
-                const className = cls(node?.properties?.className || []);
-                const style = parseStyleString(node?.properties?.style as string || "");
-                return <div className={className} style={style} {...addPositionAttributes(node, key)}>{children}</div>;
+                const { className, style, ...rest } = node?.properties || {};
+                const _className = cls(node?.properties?.className || []);
+                const _style = parseStyleString(node?.properties?.style as string || "");
+                return <div className={_className} style={_style} {...rest} {...addPositionAttributes(node, key)}>{children}</div>;
               },
             }}
           >
@@ -179,7 +182,7 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
           </ReactMarkdown>
         ))}
       </div>
-      <SelectFloatingBox htmlRef={ref} onMark={onMark} />
+      <SelectFloatingBox htmlRef={ref} onMark={onMark} onDeleteMark={onDeleteMark} />
     </div>
   );
 };
