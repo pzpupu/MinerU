@@ -421,6 +421,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
             content={allMdContent}
             onMark={handleMark}
             onDeleteMark={handleDeleteMark}
+            taskInfo={taskInfo}
           />
         </div>
         <div

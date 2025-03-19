@@ -9,6 +9,7 @@ import cls from "classnames";
 import { MdContent } from "@/store/mdStore";
 import { useRef } from "react";
 import SelectFloatingBox, { DeleteMarkInfo, MarkdownPosition } from "../select-floating-box";
+import { TaskIdResItem } from "@/api/extract";
 
 interface IMarkdownProps {
   content: string;
@@ -16,13 +17,15 @@ interface IMarkdownProps {
   markdownId?: string;
   onMark?: (color: string, markdownPosition: MarkdownPosition) => void;
   onDeleteMark?: (deleteMarkInfo: DeleteMarkInfo) => void;
+  taskInfo: TaskIdResItem;
 }
 
 const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
   content,
   markdownClass = "",
   onMark: onMark,
-  onDeleteMark: onDeleteMark
+  onDeleteMark: onDeleteMark,
+  taskInfo
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -117,7 +120,9 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
                 return <li {...node?.properties} {...addPositionAttributes(node)}>{children}</li>;
               },
               img({ node }) {
-                return <img {...node?.properties} {...addPositionAttributes(node)} />;
+                const { src, alt, ...rest } = node?.properties || {};
+                console.log('img=> ', node);
+                return <img {...rest} src={`/api/v2/analysis/pdf_img?as_attachment=False&pdf=${taskInfo.file_key}&filename=${alt}`} alt={`${alt}`} {...addPositionAttributes(node)} />;
               },
               a({ node, children }) {
                 return <a {...node?.properties} {...addPositionAttributes(node)}>{children}</a>;
