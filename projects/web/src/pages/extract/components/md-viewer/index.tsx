@@ -60,6 +60,8 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   const threshold = 562 - 427;
   const statusRef = useRef<SaveStatusRef>(null);
 
+  const [editable, setEditable] = useState(false);
+
   const menuList = [
     {
       name: formatMessage({ id: "extractor.markdown.preview" }),
@@ -140,9 +142,13 @@ const MdViewer: React.FC<IMdViewerProps> = ({
 
   useDeepCompareEffect(() => {
     if (taskInfo?.fullMdLink) {
+      console.log('taskInfo?.fullMdLink=> ', taskInfo?.fullMdLink);
+      setEditable(false);
       // setMdUrlArr(taskInfo?.markdownUrl);
-      setFullMdLink(taskInfo?.fullMdLink);
-      setAllMdContent(taskInfo?.fullMdLink || "");
+      setAllMdContent("");
+      setFullMdLink(taskInfo?.fullMdLink).finally(() => {
+        setEditable(true);
+      });
     }
     statusRef?.current?.reset();
   }, [taskInfo?.markdownUrl, params?.jobID]);
@@ -433,7 +439,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
               value={allMdContent}
               lineWrapping={lineWrap}
               onChange={_.debounce((val) => handleContentChange(val), 1000)}
-              editable
+              editable={editable}
               className="w-full h-full"
             />
           </div>
