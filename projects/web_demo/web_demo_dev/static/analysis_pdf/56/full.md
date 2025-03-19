@@ -1,4 +1,12 @@
-Math 114 MPS 
+Math 114 
+
+<div style="background-color:#F4433633;" meta-id="0-9-12">
+
+MPS
+
+</div meta-id="0-9-12">
+
+ 
 
 <div style="background-color:#F4433633;" meta-id="0-13-77">
 
@@ -30,7 +38,15 @@ Instructor: Cheryl Jaeger Balm 13
 
 (6.3(a) continued)
 
-## 6.3(b) Using Complex Fractions
+## 6.3(b) U
+
+<div style="background-color:#F4433633;" meta-id="32-11-31">
+
+sing Complex Fractio
+
+</div meta-id="32-11-31">
+
+ns
 
 Follow the steps to simplify the expression below, then refer to this worksheet while doing tonight's homework.
 

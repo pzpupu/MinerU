@@ -141,12 +141,11 @@ const MdViewer: React.FC<IMdViewerProps> = ({
   // }, [taskInfo, isHovering, displayType]);
 
   useDeepCompareEffect(() => {
+    setAllMdContent("");
+    setEditable(false);
     if (taskInfo?.fullMdLink) {
-      console.log('taskInfo?.fullMdLink=> ', taskInfo?.fullMdLink);
-      setEditable(false);
       // setMdUrlArr(taskInfo?.markdownUrl);
-      setAllMdContent("");
-      setFullMdLink(taskInfo?.fullMdLink).finally(() => {
+      setFullMdLink(taskInfo?.fullMdLink).then(() => {
         setEditable(true);
       });
     }

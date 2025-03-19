@@ -1,4 +1,12 @@
-Here is an important result we talked about in class, that the composition of continuous functions is continuous.
+Here is an important result we talked about in class, that the composition of continuous functions is 
+
+<div style="background-color:#4CAF5033;" meta-id="0-102-112">
+
+continuous
+
+</div meta-id="0-102-112">
+
+.
 
 Theorem 1. Let $g : \left( {a, b}\right)  \rightarrow  \left( {A, B}\right)$ be continuous and $f : \left( {A, B}\right)  \rightarrow  \mathbb{R}$ also be continuous. Then the composition $f \circ  g : \left( {a, b}\right)  \rightarrow  \mathbb{R}$ is continuous. (The composition $f \circ  g$ is the function defined by $\left( {f \circ  g}\right) \left( x\right)  = f\left( {g\left( x\right) }\right)$ .)
 

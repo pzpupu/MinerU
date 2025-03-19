@@ -1,229 +1,543 @@
-## Question 13
+## 2. 函数方程的代换解法
 
-The transformation $T : {R}^{2} \rightarrow  {R}^{2}$ that maps the graph of $y = \cos \left( x\right)$ onto the graph of $y = \cos \left( {{2x} + 4}\right)$ is
+虽然函数方程早在 200 多年前就已经被人们提出并加以研究了. 但至今还没有关于函数方程的统一理论和解函数方程的一般方法, 也没有关于函数方程的解的存在性和唯一性的判别准则。不仅如此, 甚至还有一些函数方程至今未能解出. 而且函数方程现有的一些解法, 往往要借助于高等数学的工具(例如把函数方程化为微分方程, 或者化为有限差分方程等等). 这当然远远超出这本小册子的范围. 但是, 对于某些特殊的、简单的函数方程, 应用初等方法也是能够解出的. 其中有一种方法叫代换法. 我们就来介绍这种方法.
 
-A. $T\left( \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack  \right)  = \left\lbrack  \begin{array}{ll} 1 & 0 \\  2 & 1 \end{array}\right\rbrack  \left( {\left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack   + \left\lbrack  \begin{matrix}  - 4 \\  0 \end{matrix}\right\rbrack  }\right)$
-
-B. $T\left( \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack  \right)  = \left\lbrack  \begin{array}{ll} 1 & 0 \\  2 & 1 \end{array}\right\rbrack  \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack   + \left\lbrack  \begin{matrix}  - 4 \\  0 \end{matrix}\right\rbrack$
-
-C. $T\left( \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack  \right)  = \left\lbrack  \begin{array}{ll} 1 & 0 \\  2 & 1 \end{array}\right\rbrack  \left( {\left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack   + \left\lbrack  \begin{matrix}  - 2 \\  0 \end{matrix}\right\rbrack  }\right)$
-
-D. $T\left( \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack  \right)  = \left\lbrack  \begin{array}{ll} 2 & 0 \\  0 & 1 \end{array}\right\rbrack  \left( {\left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack   + \left\lbrack  \begin{array}{l} 2 \\  0 \end{array}\right\rbrack  }\right)$
-
-E. $T\left( \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack  \right)  = \left\lbrack  \begin{array}{ll} 2 & 0 \\  0 & 1 \end{array}\right\rbrack  \left\lbrack  \begin{array}{l} x \\  y \end{array}\right\rbrack   + \left\lbrack  \begin{array}{l} 2 \\  0 \end{array}\right\rbrack$
-
-## Question 14
-
-The random variable $X$ is normally distributed.
-
-The mean of $X$ is twice the standard deviation of $X$ .
-
-If $\Pr \left( {X > {5.2}}\right)  = {0.9}$ , then the standard deviation of $X$ is closest to
-
-A. 7.238
-
-B. 14.476
-
-C. 3.327
-
-D. 1.585
-
-E. 3.169
-
-Question 15
-
-Part of the graph of a function $f$ , where $a > 0$ , is shown below.
-
-![0195a814-421d-79e5-b38f-dced7e02ae5f_1_379_243_790_630_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_1_379_243_790_630_0.jpg)
-
-The average value of the function $f$ over the interval $\left\lbrack  {-{2a}, a}\right\rbrack$ is
-
-A. 0
-
-B. $\frac{a}{3}$
-
-C. $\frac{a}{2}$
-
-D. $\frac{3a}{4}$
-
-E. $a$
-
-## Question 16
-
-A right-angled triangle, ${OBC}$ , is formed using the horizontal axis and the point $C\left( {m,9 - {m}^{2}}\right)$ , where $m \in  \left( {0,3}\right)$ , on the parabola $y = 9 - {x}^{2}$ , as shown below.
-
-![0195a814-421d-79e5-b38f-dced7e02ae5f_2_404_280_594_608_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_2_404_280_594_608_0.jpg)
-
-The maximum area of the triangle ${OBC}$ is
-
-A. $\frac{\sqrt{3}}{3}$
-
-B. $\frac{2\sqrt{3}}{3}$
-
-C. $\sqrt{3}$
-
-D. $3\sqrt{3}$
-
-E. $9\sqrt{3}$
-
-Question 17
-
-Let $f\left( x\right)  =  - {\log }_{e}\left( {x + 2}\right)$ .
-
-A tangent to the graph of $f$ has a vertical axis intercept at(0, c).
-
-The maximum value of $c$ is
-
-A. -1
-
-B. $- 1 + {\log }_{e}\left( 2\right)$
-
-C. $- {\log }_{e}\left( 2\right)$
-
-D. $- 1 - {\log }_{e}\left( 2\right)$
-
-E. ${\log }_{e}\left( 2\right)$
-
----
-
-		Question 18
-
-	Let $a \in  \left( {0,\infty }\right)$ and $b \in  R$ .
-
-	Consider the function $h : \left\lbrack  {-a,0)\cup (0, a}\right\rbrack   \rightarrow  R, h\left( x\right)  = \frac{a}{x} + b$ .
-
-	The range of $h$ is
-
-	A. $\left\lbrack  {b - 1, b + 1}\right\rbrack$
-
-	B. $\left( {b - 1, b + 1}\right)$
-
-C. $\left( {-\infty , b - 1}\right)  \cup  \left( {b + 1,\infty }\right)$
-
-D. $\left( {-\infty , b - 1\rbrack \cup \lbrack b + 1,\infty }\right)$
-
-	E. $\lbrack b - 1,\infty )$
-
----
-
-## Question 19
-
-Shown below is the graph of $p$ , which is the probability function for the number of times, $x$ , that a ’ 6 ’ is rolled on a fair six-sided die in 20 trials.
-
-![0195a814-421d-79e5-b38f-dced7e02ae5f_3_393_722_911_613_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_3_393_722_911_613_0.jpg)
-
-Let $q$ be the probability function for the number of times, $w$ , that a ‘ 6 ’ is not rolled on a fair six-sided die in 20 trials. $q\left( w\right)$ is given by
-
-A. $p\left( {{20} - w}\right)$
-
-B. $p\left( {1 - \frac{w}{20}}\right)$
-
-C. $p\left( \frac{w}{20}\right)$
-
-D. $p\left( {w - {20}}\right)$
-
-E. $1 - p\left( w\right)$ Question 20 Let $f : R \rightarrow  R, f\left( x\right)  = \cos \left( {ax}\right)$ , where $a \in  R \smallsetminus  \{ 0\}$ , be a function with the property
-
+[例 5] 解函数方程
+ 
 $$
-f\left( x\right)  = f\left( {x + h}\right) \text{, for all}h \in  Z
+{af}\left( x\right)  + f\left( \frac{1}{x}\right)  = {ax}.\;\left( {{a}^{2} \neq  1}\right)  \tag{17}
 $$
 
-Let $g : D \rightarrow  R, g\left( x\right)  = {\log }_{2}\left( {f\left( x\right) }\right)$ be a function where the range of $g$ is $\left\lbrack  {-1,0}\right\rbrack$ . A possible interval for $D$ is
+解 因原式中 $x \neq  0$ ,把自变量 $x$ 换为 $\frac{1}{x}$ ,于是 $\frac{1}{x}$ 就换为 $\omega$ . 函数方程 (17) 化为
 
-A. $\left\lbrack  {\frac{1}{4},\frac{5}{12}}\right\rbrack$
+$$
+{af}\left( \frac{1}{x}\right)  + f\left( x\right)  = \frac{a}{x}. \tag{18}
+$$
 
-B. $\left\lbrack  {1,\frac{7}{6}}\right\rbrack$
+(17)乘以 $a$ ,得
 
-C. $\left\lbrack  {\frac{5}{3},2}\right\rbrack$
+$$
+{af}\left( \frac{1}{x}\right)  + {a}^{2}f\left( x\right)  = {a}^{2}x. \tag{19}
+$$
 
-D. $\left\lbrack  {-\frac{1}{3},0}\right\rbrack$
+(18)-(19),得
 
-E. $\left\lbrack  {-\frac{1}{12},\frac{1}{4}}\right\rbrack$
+$$
+\left( {1 - {a}^{2}}\right) f\left( x\right)  = \frac{a}{x} - {a}^{2}x.
+$$
 
-## SECTION B
+$$
+\therefore f\left( x\right)  = \frac{a\left( {1 - a{x}^{2}}\right) }{x\left( {1 - {a}^{2}}\right) }\text{. }
+$$
 
-## Instructions for Section B
+从上例可以看出, 代换法的基本思想是这样的: 将函数中的自变量 $x$ 适当地代换以别的自变量 (在代换时应注意力求使函数的定义域不发生变化), 得到一个新的函数方程. 把新得到的这个函数方程与原有的函数方程联立, 组成一个关于未知函数的代数方程组. 再应用通常的消元法, 解这个方程组,就求得了原函数方程的解. 至于原来函数中的自变量 $x$ 用什么东西代换才算是适当的, 这就要看所给的函数方程的具体特点了一一这属于解题技巧问题.
 
-Answer all questions in the spaces provided.
+[例 6] 求函数 $f\left( x\right)$ ,如果
 
-In all questions where a numerical answer is required, an exact value must be given unless otherwise specified.
+$$
+{af}\left( {x}^{n}\right)  + f\left( {-{x}^{n}}\right)  = {bx}, \tag{20}
+$$
 
-In questions where more than one mark is available, appropriate working must be shown.
+其中 ${a}^{2} \neq  1, n$ 是奇数.
 
-Unless otherwise indicated, the diagrams in this book are not drawn to scale.
+解 把 $x$ 换以 $- x$ ,由于 $n$ 是奇数,就有
 
-Question 1 (11 marks)
+$$
+{af}\left( {-{x}^{n}}\right)  + f\left( {x}^{n}\right)  =  - {bx}. \tag{21}
+$$
 
-Let $f : R \rightarrow  R, f\left( x\right)  = a{\left( x + 2\right) }^{2}{\left( x - 2\right) }^{2}$ , where $a \in  R$ . Part of the graph of $f$ is shown below. a. Show that $a = \frac{1}{4}$ . 1 mark
+从 $\left( {20}\right) ,\left( {21}\right)$ 中消去 $f\left( {-{x}^{n}}\right)$ ,求得
 
-![0195a814-421d-79e5-b38f-dced7e02ae5f_5_319_636_1064_588_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_5_319_636_1064_588_0.jpg)
+$$
+f\left( {x}^{n}\right)  = \frac{bx}{a - 1}.
+$$
 
-__________
+因为 $n$ 是奇数,可以把 ${x}^{n}$ 换成 $x$ ,所以最后有
 
-__________
+$$
+f\left( x\right)  = \frac{b\sqrt[n]{x}}{a - 1}.
+$$
 
-b. Express $f\left( x\right)  = \frac{1}{4}{\left( x + 2\right) }^{2}{\left( x - 2\right) }^{2}$ in the form $f\left( x\right)  = \frac{1}{4}{x}^{4} + b{x}^{2} + c$ , where $b$ and $c$ are integers. 1 mark
+[例 7] 解函数方程
 
-Part of the graph of the derivative function ${f}^{\prime }$ is shown below.
+$$
+{af}\left( {x - 1}\right)  + {bf}\left( {1 - x}\right)  = {cx}. \tag{22}
+$$
 
-![0195a814-421d-79e5-b38f-dced7e02ae5f_6_393_198_553_405_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_6_393_198_553_405_0.jpg)
+解 把(x - 1)代之以 $x$ ,那末(1 - x)就代之以 $- x$ ,而 $x$ 就应代之以 $\left( {1 + x}\right)$ ;
 
-c. i. Write the rule for ${f}^{\prime }$ in terms of $x$ . 1 mark
+又如果把(x - 1)代之以 $- x$ ,那末(1 - x)就代之以 $x$ ,而 $x$ 就应代之以(1 - x).
 
-ii. Find the minimum value of the graph of ${f}^{\prime }$ on the interval $x \in  \left( {0,2}\right)$ . 2 marks
+分别代入原函数方程, 就得
 
-__________
+$$
+\left\{  {\begin{array}{l} {af}\left( x\right)  + {bf}\left( {-x}\right)  = c\left( {1 + x}\right) , \\  {bf}\left( x\right)  + {af}\left( {-x}\right)  = c\left( {1 - x}\right) . \end{array}\therefore }\right.
+$$
 
-__________
+解这个方程组, 得知:
 
-__________
+(1)当 ${a}^{2} \neq  {b}^{2}$ 时,
 
-Let $h : R \rightarrow  R, h\left( x\right)  =  - \frac{1}{4}{\left( x + 2\right) }^{2}{\left( x - 2\right) }^{2} + 2$ . Parts of the graphs of $f$ and $h$ are shown below.
+$$
+f\left( x\right)  = \frac{c}{a - b}x + \frac{c}{a + b}
+$$
 
-![0195a814-421d-79e5-b38f-dced7e02ae5f_6_392_1331_679_390_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_6_392_1331_679_390_0.jpg)
+(2)当 ${a}^{2} = {b}^{2}$ ,而 $c \neq  0$ 时, $f\left( x\right)$ 不存在；
 
-d. Write a sequence of two transformations that map the graph of $f$ onto the graph of $h$ . 1 mark
+(3). 当 $a = b$ ,且 $c = 0$ 时, $f\left( x\right)$ 是任何奇函数;
 
-__________
+(4)当 $a =  - b$ ,且 $c = 0$ 时, $f\left( x\right)$ 是任何偶函数,
 
-__________
+[例 8] 解函数方程
 
-![0195a814-421d-79e5-b38f-dced7e02ae5f_7_375_125_805_461_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_7_375_125_805_461_0.jpg)
+$$
+f\left( {x + y}\right)  + f\left( {x - y}\right)  = {2f}\left( x\right) \cos y. \tag{23}
+$$
 
-e. i. State the values of $x$ for which the graphs of $f$ and $h$ intersect. 1 mark
+解 依次作下列代换:
 
-ii. Write down a definite integral that will give the total area of the shaded regions in the graph above. 1 mark
+$$
+x = 0,\;y = t;
+$$
 
-__________
+...
 
-iii. Find the total area of the shaded regions in the graph above. Give your answer correct to two decimal places. 1 mark
+$$
+x = \frac{\pi }{2} + t,\;y = \frac{\pi }{2}
+$$
 
-f. Let $D$ be the vertical distance between the graphs of $f$ and $h$ .
+$$
+x = \frac{\pi }{2},\;y = \frac{\pi }{2} + t,
+$$
 
-Find all values of $x$ for which $D$ is at most 2 units. Give your answers correct to two decimal places. 2 mar
+就得到方程组
 
-__________
+$$
+\left\{  \begin{array}{l} f\left( t\right)  + f\left( {-t}\right)  = {2f}\left( 0\right) \cos t, \\  f\left( {x + t}\right)  + f\left( t\right)  = 0, \\  f\left( {x + t}\right)  + f\left( {-t}\right)  =  - {2f}\left( \frac{x}{2}\right) \sin t, \end{array}\right.  \tag{24}
+$$
 
-ductuntFZ-ulecolog SECTION B - continued TURN OVER
+(25)
 
-## Question 2 (11 marks)
+(26)
 
-An area of parkland has a river running through it, as shown below. The river is shown shaded.
+$\left( {24}\right)  + \left( {25}\right)  - \left( {26}\right)$ ; 得
 
-The north bank of the river is modelled by the function ${f}_{1} : \left\lbrack  {0,{200}}\right\rbrack   \rightarrow  R,{f}_{1}\left( x\right)  = {20}\cos \left( \frac{\pi x}{100}\right)  + {40}$ .
+$$
+{2f}\left( t\right)  = {2f}\left( 0\right) \cos t + {2f}\left( \frac{\pi }{2}\right) \sin t.
+$$
 
-The south bank of the river is modelled by the function ${f}_{2} : \left\lbrack  {0,{200}}\right\rbrack   \rightarrow  R,{f}_{2}\left( x\right)  = {20}\cos \left( \frac{\pi x}{100}\right)  + {30}$ .
+就是
 
-The horizontal axis points east and the vertical axis points north.
+$$
+f\left( t\right)  = f\left( 0\right) \cos t + f\left( \frac{\pi }{2}\right) \sin t.
+$$
 
-All distances are measured in metres.
+记
 
-![0195a814-421d-79e5-b38f-dced7e02ae5f_9_285_510_1127_659_0.jpg](images/0195a814-421d-79e5-b38f-dced7e02ae5f_9_285_510_1127_659_0.jpg)
+$$
+a = f\left( 0\right) , b = f\left( \frac{\pi }{2}\right) ,
+$$
 
-A swimmer always starts at point $P$ , which has coordinates (50,30).
+即得
 
-Assume that no movement of water in the river affects the motion or path of the swimmer, which is always a straight line.
+$$
+f\left( x\right)  = a\cos x + b\sin x.
+$$
 
-a. The swimmer swims north from point $P$ .
+有时候要把自变量代换成具体的数值才行. 而当 $f\left( x\right)$ 是定义在自然数上的函数时, 往往要进行多次代换, 才能求出这个函数. 记住等差数列和等比数列前 $n$ 项和的公式,往往是很有用的.
 
-Find the distance, in metres, that the swimmer needs to swim to get to the north bank of the river. 1 mark
+我们知道,当首项为 $a$ ,公差为 $d$ 时,等差数列前 $n$ 项的和
+
+$$
+{S}_{n} = a + \left( {a + d}\right)  + \left( {a + {2d}}\right)  + \cdots  + \left\lbrack  {a + \left( {n - 1}\right) d}\right\rbrack
+$$
+
+$$
+= \frac{n\left\lbrack  {{2a} + \left( {n - 1}\right) d}\right\rbrack  }{2}\text{. } \tag{27}
+$$
+
+特别是当 $a = 1, d = 1$ 时,
+
+$$
+{S}_{n} = 1 + 2 + 3 + \cdots  + n = \frac{n\left( {n + 1}\right) }{2}. \tag{28}
+$$
+
+对于首项为 $a$ ,公差为 $q\left( { \neq  1}\right)$ 的等比数列,前 $n$ 项的和
+
+$$
+{S}_{n} = a + {aq} + a{q}^{2} + \cdots  + a{q}^{n - 1} = \frac{a\left( {{q}^{n} - 1}\right) }{q - 1}. \tag{29}
+$$
+
+特别是当 $a = q\left( { \neq  1}\right)$ 时,
+
+$$
+{S}_{n} = a + {a}^{2} + {a}^{3} + \cdots  + {a}^{n} = \frac{a\left( {{a}^{n} - 1}\right) }{a - 1}. \tag{30}
+$$
+
+[例 9] 设函数 $f\left( n\right)$ 的定义域是自然数. 求 $f\left( n\right)$ ,使它满足条件
+
+$$
+f\left( {m + n}\right)  = f\left( m\right)  + f\left( n\right)  + {mn}, \tag{31}
+$$
+
+$$
+f\left( 1\right)  = 1\text{.} \tag{82}
+$$
+
+解 设 $m = 1$ ,便有
+
+$$
+f\left( {n + 1}\right)  = f\left( n\right)  + n + 1
+$$
+
+把 $n$ 顺次用 $1,2,3,\cdots ,\left( {k + 1}\right)$ 代换,就得
+
+$$
+\left\{  \begin{array}{l} f\left( 2\right)  = f\left( 1\right)  + 2, \\  f\left( 3\right)  = f\left( 2\right)  + 3, \\  f\left( 4\right)  = f\left( 3\right)  + 4, \\  \cdots \cdots \cdots \cdots \cdots \cdots \\  f\left( {k + 1}\right)  = f\left( k\right)  + \left( {k + 1}\right) . \end{array}\right.
+$$
+
+把方程组的所有方程相加, 得
+
+$$
+f\left( {k + 1}\right)  = f\left( 1\right)  + 2 + 3 + 4 + \cdots  + \left( {k + 1}\right)
+$$
+
+$$
+= 1 + 2 + 3 + \cdots  + \left( {k + 1}\right)
+$$
+
+$$
+- \frac{\left( {k + 1}\right) \left( {k + 2}\right) }{2}
+$$
+
+$$
+\therefore f\left( n\right)  = \frac{n\left( {n + 1}\right) }{2}\text{. }
+$$
+
+[例 10] 函数 $f\left( n\right)$ 定义在自然数上,且满足
+
+$$
+f\left( n\right)  = f\left( {n - 1}\right)  + {a}^{n}, \tag{33}
+$$
+
+$$
+f\left( 1\right)  = 1\text{.} \tag{34}
+$$
+
+求 $f\left( n\right)$ .
+
+解 把 $n$ 分别代换以 $2,3,4,\cdots , n$ ,便得
+
+$$
+\left\{  \begin{array}{l} f\left( 2\right)  = f\left( 1\right)  + {a}^{2}, \\  f\left( 3\right)  = f\left( 2\right)  + {a}^{3}, \\  f\left( 4\right)  = f\left( 3\right)  + {a}^{4}, \\  \cdots \cdots \cdots \cdots \cdots \cdots \\  f\left( n\right)  = f\left( {n - 1}\right)  + {a}^{n}, \end{array}\right.
+$$
+
+加在一起就化为
+
+$$
+f\left( n\right)  = f\left( 1\right)  + {a}^{2} + {a}^{3} + \cdots  + {a}^{n}.
+$$
+
+所以
+
+$$
+f\left( n\right)  = \left\{  \begin{array}{ll} n, & \text{ 当 }a = 1\text{ 时,} \\  1 + \frac{{a}^{2}\left( {{a}^{n - 1} - 1}\right) }{a - 1}, & \text{ 当 }a \neq  1\text{ 时. } \end{array}\right.
+$$
+
+[例 11] (1) $n$ 个同学任意排成一队,共有多少种排法?
+
+(2)从 $n$ 个同学中任意选出 $k\left( { \leq  n}\right)$ 个同学排队,共有多少种排法?
+
+解 (1) 设 $n$ 个同学排队,共有 $f\left( n\right)$ 种排法. 如果再增加 1 个同学,让这位同学插入队伍. 对于原来 $n$ 个同学的每一种排法, 这位同学可以排在第 1 名(队首), 第 2 名, 第 3 名, $\cdots$ ,第 $n + 1$ 名 (队尾),即有 $n + 1$ 种“插”法. 因此
+
+$$
+f\left( {n + 1}\right)  = \left( {n + 1}\right) f\left( n\right) . \tag{35}
+$$
+
+而
+
+$$
+f\left( 1\right)  = 1\text{.}
+$$
+
+依次令 $n = 1,2,3,\cdots$ ,得
+
+$$
+f\left( 2\right)  = {2f}\left( 1\right) ,
+$$
+
+$$
+f\left( 3\right)  = {3f}\left( 2\right) ,
+$$
+
+$$
+f\left( 4\right)  = {4f}\left( 3\right) ,
+$$
+
+...............
+
+$$
+f\left( {n + 1}\right)  = \left( {n + 1}\right) f\left( n\right) .
+$$
+
+把这些等式左右两边分别相乘, 便有
+
+$$
+f\left( 2\right) f\left( 3\right) f\left( 4\right) \cdots f\left( {n + 1}\right)
+$$
+
+$$
+= 2 \cdot  3 \cdot  4 \cdot  \cdots  \cdot  \left( {n + 1}\right) f\left( 1\right) f\left( 2\right) f\left( 3\right) \cdots f\left( n\right) .
+$$
+
+依题意可知 $f\left( 2\right) \text{、}f\left( 3\right) \text{、}\cdots \text{、}f\left( n\right)$ 都不为 0,故两边同除以 $f\left( 2\right) f\left( 3\right) f\left( 4\right) \cdots f\left( n\right)$ 后,得到
+
+$$
+f\left( {n + 1}\right)  = 2 \cdot  3 \cdot  4 \cdot  \cdots  \cdot  \left( {n + 1}\right) f\left( 1\right)
+$$
+
+$$
+= 1 \cdot  2 \cdot  3 \cdot  \cdots  \cdot  \left( {n + 1}\right) \text{.}
+$$
+
+$$
+\therefore f\left( n\right)  = n!\text{. }
+$$
+
+这里,记号 $n! = 1 \cdot  2 \cdot  3 \cdot  \cdots  \cdot  n$ ,读做 $n$ 的阶乘.
+
+就是说, $n$ 个同学排成一队,共有 $n$ ! 种排法.
+
+(2)设从 $n$ 个同学选出 $k$ 个同学排队,共有 ${f}_{k}\left( n\right)$ 种排法. 现在新增加一位同学,共有了 $\left( {n + 1}\right)$ 个同学,仍选出 $k$ 个同学排队. $k$ 个同学排成的队伍可以分为两类: 一类是这个新同学没有选进的队伍. 这种排法按照假设应共有 ${f}_{k}\left( n\right)$ 种. 另一类是新同学被选入的队伍. 设想这种队伍的排法是这样实现的: 由新同学替换原来队伍中的旧同学. 我们来看, 如果新同学替换的是原队伍中的第 1 名, 共有多少种排法: 乍看起来,因为原队伍共有 ${f}_{k}\left( n\right)$ 种排法,因而以新同学为队首的排法也有 ${f}_{k}\left( n\right)$ 种. 其实不然. 因为在原队伍中,如果队首以后的(k - 1)个同学及其排列顺序确定时,这时尚余 $n - \left( {k - 1}\right)  = n - k + 1$ 个同学可充当队首. 因而有 $n - k + 1$ 种排法. 但当队首被新同学替换后, 就变成 1 种排法了. 可见以新同学为队首的排法为 $\frac{1}{n - k + 1}{f}_{k}\left( n\right)$ 种. 同样的,以新同学为第 2 名,第 3 名, $\cdots$ ,第 $k$ 名的队伍,排法也各有 $\frac{1}{n - k + 1}{f}_{k}\left( n\right)$ 种. 总之,有新同学出现的队伍,排法一共有 $\frac{k}{n - k + 1}{f}_{k}\left( n\right)$ 种. 于是,得函数方程
+
+$$
+{f}_{k}\left( {n + 1}\right)  = {f}_{k}\left( n\right)  + \frac{k}{n - k + 1}{f}_{k}\left( n\right) .
+$$
+
+或者
+
+$$
+{f}_{k}\left( {n + 1}\right)  = \frac{n + 1}{n - k + 1}{f}_{k}\left( n\right) . \tag{36}
+$$
+
+分别令 $n = k, k + 1,\cdots$ ,得
+
+$$
+{f}_{k}\left( {k + 1}\right)  = \frac{k + 1}{1}{f}_{k}\left( k\right)
+$$
+
+$$
+{f}_{k}\left( {k + 2}\right)  = \frac{k + 2}{2}{f}_{k}\left( {k + 1}\right) ,
+$$
+
+$$
+{f}_{k}\left( {k + 3}\right)  = \frac{k + 3}{3}{f}_{k}\left( {k + 2}\right) ,
+$$
+
+........................
+
+$$
+{f}_{k}\left( {n + 1}\right)  = \frac{n + 1}{n - k + 1}{f}_{k}\left( n\right) .
+$$
+
+相乘, 约去等式两边相同的因式 (它们显然是不为 0 的), 得
+
+$$
+{f}_{k}\left( {n + 1}\right)  = \frac{k + 1}{1} \cdot  \frac{k + 2}{2} \cdot  \frac{k + 3}{3} \cdot  \cdots  \cdot  \frac{n + 1}{n - k + 1}{f}_{k}\left( k\right) .
+$$
+
+但由第 (1) 题知,
+
+$$
+{f}_{k}\left( k\right)  = k!\text{. }
+$$
+
+所以
+
+$$
+{f}_{k}\left( {n + 1}\right)  = \frac{\left( {n + 1}\right) n\cdots \left( {k + 2}\right) \left( {k + 1}\right)  \cdot  k!}{\left( {n - k + 1}\right) !}.
+$$
+
+或者
+
+$$
+{f}_{k}\left( n\right)  = \frac{n!}{\left( {n - k}\right) !} = n\left( {n - 1}\right) \left( {n - 2}\right) \cdots \left( {n - k + 1}\right) ,
+$$
+
+这就是从 $n$ 个同学中任意选出 $k\left( { \leq  n}\right)$ 不同学排队的共有的排法.
+
+在这里,我们实际上得到了排列公式: 从 $n$ 个不同的元素里,每次取出 $k\left( {1 \leq  k \leq  n}\right)$ 个元素,选排列 (即 $k < n$ 时) 数为
+
+$$
+{A}_{n}^{k} = {f}_{k}\left( n\right)  = \frac{n!}{\left( {n - k}\right) !} = n\left( {n - 1}\right) \cdots \left( {n - k + 1}\right) ; \tag{37}
+$$
+
+全排列 (即 $k = n$ 时) 数为
+
+1.
+
+$$
+{P}_{n} = {A}_{n}^{n} = n! \tag{38}
+$$
+
+(注意,我们规定 $0! = 1$ )
+
+[例 12] 求从 $n$ 个不同的元素里,每次取出 $k\left( {1 \leq  k \leq  n}\right)$ 个元素的组合数 ${F}_{k}\left( n\right)$ 公式,以及 ${F}_{k}\left( n\right)$ 所应满足的函数方程.
+
+解. 有了排列数公式, 可以方便地推导出组合数公式, 设从 $n$ 个不同的元素里,每次取出 $k\left( {1 \leq  k \leq  n}\right)$ 个元素的排列数为 ${f}_{k}\left( n\right)$ . 因为 $k$ 个元素的全排列数为 $k!$ ,而这 $k!$ 个排列在组合中只算作 1 组. 因此, 排列数与组合数间有如下关系:
+
+$$
+{f}_{k}\left( n\right)  = k!{F}_{k}\left( n\right) . \tag{39}
+$$
+
+代入 (37), 得
+
+$$
+{F}_{k}\left( n\right)  = \frac{1}{k!}{f}_{k}\left( n\right)  = \frac{1}{k!} \cdot  \frac{n!}{\left( {n - k}\right) !} = \frac{n!}{k!\left( {n - k}\right) !}. \tag{40}
+$$
+
+这就是我们所要求的公式.
+
+把 (39) 代入函数方程 (36), 得
+
+$$
+k!{F}_{k}\left( {n + 1}\right)  = \frac{n + 1}{n - k + 1} \cdot  k!{F}_{k}\left( n\right) ,
+$$
+
+即
+
+$$
+{F}_{k}\left( {n + 1}\right)  = \frac{n + 1}{n - k + 1}{F}_{k}\left( n\right) . \tag{41}
+$$
+
+这就是组合数 ${F}_{k}\left( n\right)$ 所应满足的函数方程.
+
+从 $n$ 个不同的元素里,每次取出 $k$ 个元素的组合数,通常记做 ${C}_{n}^{k}$ . 这样,公式 (40) 可写成
+
+$$
+{C}_{n}^{k} = \frac{n!}{k!\left( {n - k}\right) !}, \tag{42}
+$$
+
+而公式 (41) 则可写成
+
+$$
+{C}_{n + 1}^{k} = \frac{n + 1}{n - k + 1}{C}_{n}^{k}. \tag{43}
+$$
+
+[例 13] (1) 直线上有 $n$ 个点 (任何两点不相重合). 这 $n$ 个点把直线分成了多少部分 (区间)?
+
+(2)平面上有 $n$ 条直线(任何两条直线彼此相交,但任何三条直线不交于同一点). 这 $n$ 条直线把平面分成了多少部分?
+
+(3)空间中有 $n$ 个平面(任何三个平面彼此相交,即任何四个平面却无公共点). 这 $n$ 个平面把空间分成了多少部分?
+
+解 (1) 设直线上 $n$ 个点 ${A}_{1},{A}_{2},\cdots ,{A}_{n}$ 把直线分成了 ${f}_{1}\left( n\right)$ 个部分 (图 6). 现在再加上一个点 ${A}_{n + 1}$ . 这个点把原来的某一区间分成两个区间. 所以 ${f}_{1}\left( {n + 1}\right)$ 比 ${f}_{1}\left( n\right)$ 多 1 . 就是
+
+$$
+{f}_{1}\left( {n + 1}\right)  = {f}_{1}\left( n\right)  + 1, \tag{44}
+$$
+
+![0195a87d-8c14-7cb2-a357-9180da18fe88_9_591_690_487_122_0.jpg](images/0195a87d-8c14-7cb2-a357-9180da18fe88_9_591_690_487_122_0.jpg)
+
+图 6
+
+而
+
+$$
+{f}_{1}\left( 1\right)  = 2\text{.} \tag{45}
+$$
+
+解函数方程 (44) ; 得
+
+$$
+{f}_{1}\left( n\right)  = n + 1\text{.}
+$$
+
+就是说,直线上 $n$ 个点把直线分成 $\left( {n + 1}\right)$ 个部分.
+
+(2) 设平面上 $n$ 条直线 ${l}_{1}$ , ${l}_{2},\cdots ,{l}_{n}$ 把平面分为 ${f}_{2}\left( n\right)$ 个部分 (图 7). 增加一条直线 ${l}_{n + 1}$ . 这条直线与原来的 $n$ 条直线相交于 $n$ 点. 由第 (1) 题的结论,这 $n$ 个点把直线分成 $\left( {n + 1}\right)$ 个部分. 这 $\left( {n + 1}\right)$ 个部分的每一段都穿过原来的某一个区域,且把这个区域分成两部分. 所以 ${f}_{2}\left( {n + 1}\right)$ 比 ${f}_{2}\left( n\right)$ 多 $n +$ 1. 就是
+
+$$
+{f}_{2}\left( {n + 1}\right)  = {f}_{2}\left( n\right)  + n + 1, \tag{46}
+$$
+
+![0195a87d-8c14-7cb2-a357-9180da18fe88_9_979_1251_428_371_0.jpg](images/0195a87d-8c14-7cb2-a357-9180da18fe88_9_979_1251_428_371_0.jpg)
+
+图 7
+
+而
+
+$$
+{f}_{2}\left( 1\right)  = 2\text{.} \tag{47}
+$$
+
+进行一系列代换, 得
+
+$$
+{f}_{2}\left( 2\right)  = {f}_{2}\left( 1\right)  + 2,
+$$
+
+$$
+{f}_{2}\left( 3\right)  = {f}_{2}\left( 2\right)  + 3,
+$$
+
+$$
+{f}_{2}\left( 4\right)  = {f}_{2}\left( 3\right)  + 4,
+$$
+
+..............
+
+$$
+{f}_{2}\left( {n + 1}\right)  = {f}_{2}\left( n\right)  + \left( {n + 1}\right) .
+$$
+
+相加后, 得
+
+$$
+{f}_{2}\left( {n + 1}\right)  = {f}_{2}\left( 1\right)  + 2 + 3 + 4 + \cdots  + \left( {n + 1}\right) .
+$$
+
+或者
+
+$$
+{f}_{2}\left( {n + 1}\right)  = \frac{{n}^{2} + {3n} + 4}{2},
+$$
+
+## 也就是
+
+3
+
+$$
+{f}_{2}\left( n\right)  = \frac{{n}^{2} + n + 2}{2}.
+$$
+
+这就是说, $n$ 条直线把平面分成 $\frac{{n}^{2} + n + 2}{2}$ 个部分.
+
+(3) 设 $n$ 个平面把空间分成 ${f}_{3}\left( n\right)$ 个部分. 类似于上面的分析, 可得函数方程
+
+$$
+{f}_{3}\left( {n + 1}\right)  = {f}_{3}\left( n\right)  + \frac{{n}^{2} + n + 2}{2}. \tag{48}
+$$
+
+而
+
+$$
+{f}_{3}\left( 1\right)  = 2\text{.} \tag{49}
+$$
+
+依次进行代换, 得
+
+$$
+{f}_{3}\left( 2\right)  = {f}_{3}\left( 1\right)  + \frac{{1}^{2}}{2} + \frac{1}{2} + 1
+$$
+
+$$
+{f}_{3}\left( 3\right)  = {f}_{3}\left( 2\right)  + \frac{{2}^{2}}{2} + \frac{2}{2} + 1,
+$$
+
+、
+
+$$
+{f}_{3}\left( 4\right)  = {f}_{3}\left( 3\right)  + \frac{{3}^{2}}{2} + \frac{3}{2} + 1,
+$$
+
+........................... . . .20 .

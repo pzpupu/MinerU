@@ -2,7 +2,15 @@
 
 ![0195a814-27b3-78a5-b03c-f3908cba99db_0_182_57_216_213_0.jpg](images/0195a814-27b3-78a5-b03c-f3908cba99db_0_182_57_216_213_0.jpg)
 
-Time allowed: 4 hours and 30 minutes.
+Time 
+
+<div style="background-color:#F4433633;" meta-id="4-5-12">
+
+allowed
+
+</div meta-id="4-5-12">
+
+: 4 hours and 30 minutes.
 
 Tools for writing and drawing are the only ones allowed.
 

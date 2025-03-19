@@ -2,11 +2,35 @@
 
 ![0195a814-049b-795c-8f11-e1c6ef4f972f_0_735_209_177_174_0.jpg](images/0195a814-049b-795c-8f11-e1c6ef4f972f_0_735_209_177_174_0.jpg)
 
-# Mahidol University International College  Mathematics Test
+# M
+
+<div style="background-color:#F4433633;" meta-id="4-3-30">
+
+ahidol University Internati
+
+</div meta-id="4-3-30">
+
+onal College  Mathematics Test
 
 SAMPLE
 
-DIRECTIONS: Solve the following problems using any available space on the page for scratchwork. On your answer sheet fill in the choice that best corresponds to the correct answer. You may fold any page of the test papers but may NOT separate any page from the test papers themselves. The use of a calculator is permitted.
+DIRECTIONS: Solv
+
+<div style="background-color:#F4433633;" meta-id="16-16-118">
+
+e the following problems using any available space on the page for scratchwork. On your answer sheet f
+
+</div meta-id="16-16-118">
+
+ill in the 
+
+<div style="background-color:#F4433633;" meta-id="24-11-17">
+
+choice
+
+</div meta-id="24-11-17">
+
+ that best corresponds to the correct answer. You may fold any page of the test papers but may NOT separate any page from the test papers themselves. The use of a calculator is permitted.
 
 Questions 1 and 2 refer to the following chart:
 
