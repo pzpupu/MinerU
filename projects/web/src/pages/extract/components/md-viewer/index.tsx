@@ -217,6 +217,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
         const newMdContent = lines.join('\n');
 
         statusRef?.current?.triggerSave();
+        setAllMdContent(newMdContent);
         updateFullMdContent(taskInfo.file_key!, newMdContent).then(() => {
           notification.success({
             message: "高亮成功",

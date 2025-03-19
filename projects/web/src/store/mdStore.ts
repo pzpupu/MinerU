@@ -334,11 +334,11 @@ const useMdStore = create<MdState>()(devtools(
 
         if (result && result.success) {
           // 更新本地状态
-          refresh && set(() => {
-            return {
-              allMdContent: data,
-            };
-          });
+          // refresh && set(() => {
+          //   return {
+          //     allMdContent: data,
+          //   };
+          // });
         } else {
           throw new Error("Failed to update Markdown content");
         }
