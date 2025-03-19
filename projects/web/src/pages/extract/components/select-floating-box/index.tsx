@@ -22,20 +22,20 @@ const MARK_COLORS = [
 export interface MarkdownPosition {
     startLine: number;
     startColumn: number;
-    startOffset: number;
+    // startOffset: number;
     endLine: number;
     endColumn: number;
-    endOffset: number;
+    // endOffset: number;
 }
 
 export interface DeleteMarkInfo {
     metaId: string;
     startLine: number;
     startColumn: number;
-    startOffset: number;
+    // startOffset: number;
     endLine: number;
     endColumn: number;
-    endOffset: number;
+    // endOffset: number;
 }
 
 // 定义选择信息接口
@@ -111,113 +111,190 @@ const SelectFloatingBox: React.FC<{
                 // 获取选择范围内的Markdown段落
                 if (!selection || selection.rangeCount === 0) return [];
 
-
                 const position: MarkdownPosition = {
                     startLine: 0,
-                    startColumn: -1,
-                    startOffset: 0,
+                    startColumn: 0,
+                    // startOffset: 0,
                     endLine: 0,
-                    endColumn: -1,
-                    endOffset: 0,
+                    endColumn: 0,
+                    // endOffset: 0,
                 };
 
-                // // range.startContainer向左右遍历，尝试找到一个最近的元素中，有data-start-line属性的元素，如果都未找到，则向开始遍历有data-start-line属性的元素
-                // let startElement = range.startContainer as HTMLElement;
-                // while (!startElement?.dataset || !startElement?.dataset.startLine) {
-                //     if (startElement.previousElementSibling) {
-                //         startElement = startElement.previousElementSibling as HTMLElement;
-                //     }
-                // }
-                
-                
-
-                // startContainer向上遍历，直到找到key
+                // 查找起始位置元素
                 let startElement = range.startContainer as HTMLElement;
-                
-                // 先开始向前遍历，直到找到有data-start-line属性的元素，如果找不到，则继续向上遍历，直到mdContainer元素为止
-                while (!startElement?.dataset || !startElement?.dataset.startLine) {
-                    // while (startElement.parentElement != mdContainer) {
-                    // 选择文本在span标签中后，则需要将startColumn设置为span标签的endColumn+1 
-                    if (startElement.nextElementSibling) {
-                        startElement = startElement.nextElementSibling as HTMLElement;
-                        if (startElement?.dataset.startColumn) {
-                            position.startColumn = parseInt(startElement.dataset.startColumn || '0') - ((range.startContainer?.textContent?.length || 0) - range.startOffset) - 1;
-                        }
-                    } else {
-                        startElement = startElement.parentElement!;
+                // 是否在公式元素内部
+                let isStartInside = false;
+
+                // 向上查找，直到找到包含必要位置数据的元素
+                while (startElement && (!startElement.dataset || !startElement.dataset.startLine)) {
+                    // 如果存在兄弟元素并且它有位置数据，优先使用兄弟元素
+                    if (startElement.previousElementSibling &&
+                        (startElement.previousElementSibling as HTMLElement).dataset?.startLine) {
+                        startElement = startElement.previousElementSibling as HTMLElement;
+                        isStartInside = false;
+                        break;
+                    }
+
+                    // if (startElement.nextElementSibling &&
+                    //     (startElement.nextElementSibling as HTMLElement).dataset?.startLine) {
+                    //     startElement = startElement.nextElementSibling as HTMLElement;
+                    //     break;
+                    // }
+
+                    // 继续向上查找
+                    if (!startElement.parentElement) break;
+                    startElement = startElement.parentElement;
+                    if (startElement.tagName === 'SPAN' && startElement.classList.contains('katex')) {
+                        isStartInside = true;
                     }
                 }
 
-                console.log('startElement=> ', startElement);
+                console.log('找到的startElement=> ', startElement, isStartInside);
 
-                if (startElement.dataset && startElement.dataset.startLine && startElement.dataset.startColumn) {
-                    // 如果是h1-h6标签，则startColumn需要+2
-                    if (position.startColumn === -1) {
-                        if (startElement.tagName === 'H1') {
-                            position.startColumn = range.startOffset + 2;
-                        } else if (startElement.tagName === 'H2') {
-                            position.startColumn = range.startOffset + 3;
-                        } else if (startElement.tagName === 'H3') {
-                            position.startColumn = range.startOffset + 4;
-                        } else if (startElement.tagName === 'H4') {
-                            position.startColumn = range.startOffset + 5;
-                        } else if (startElement.tagName === 'H5') {
-                            position.startColumn = range.startOffset + 6;
-                        } else if (startElement.tagName === 'H6') {
-                            position.startColumn = range.startOffset + 7;
-                        } else {
-                            position.startColumn = range.startOffset;
+                try {
+                    // 获取起始位置信息
+                    if (startElement?.dataset?.startLine) {
+                        position.startLine = parseInt(startElement.dataset.startLine || '0');
+
+                        // 根据不同的标记类型调整列偏移
+                        let offset = 0;
+
+                        if (range.startContainer.nodeType === Node.TEXT_NODE) {
+                            if (startElement.tagName.match(/^H[1-6]$/)) {
+                                // 针对Markdown标题的# 数量
+                                const headingLevel = parseInt(startElement.tagName.substring(1));
+                                offset += headingLevel + 1;
+                                offset += parseInt(startElement.dataset.startColumn || '0');
+                            } else {
+                                // 如果开始元素是段落元素与文本节点
+                                offset = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
+                                offset -= 1;
+                            }
                         }
-                    }
 
-                    position.startLine = parseInt(startElement.dataset.startLine || '0');
-                    // position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
-                    position.startOffset = parseInt(startElement.dataset.startOffset || '0');
-                } else {
+                        if (startElement.classList.contains('katex')) {
+                            // 根据range.startContainer来判断是否在公式元素中，在公式元素中，则根据公式元素的dataset中的startColumn，否则使用endColumn
+
+                            // 根据位置关系选择使用startColumn或endColumn
+                            if (isStartInside) {
+                                // 如果选择开始于公式内部，使用startColumn
+                                offset = parseInt(startElement.dataset.startColumn || '0') - 1;
+                            } else {
+                                // 如果选择不在公式内部开始，使用endColumn
+                                offset = parseInt(startElement.dataset.endColumn || '0');
+                                if (range.startContainer.nodeType === Node.TEXT_NODE) {
+                                    offset += range.startOffset - 1;
+                                }
+                            }
+                        }
+
+                        // 如果是公式元素，确保标记能够覆盖整个公式，然后需要根据公式元素在range.startContainer兄弟元素的位置的startColumn来计算
+                        // if (startElement.classList.contains('katex')) {
+                        //     // 如果开始元素是公式元素，则根据公式元素的dataset中的startColumn和endColumn来计算
+                        //     const katexStartColumn = parseInt(startElement.dataset.startColumn || '0');
+                        //     const katexEndColumn = parseInt(startElement.dataset.endColumn || '0');
+                        //     if (isStartAbove) {
+                        //         position.startColumn = katexStartColumn + baseColumn;
+                        //     } else {
+                        //         position.startColumn = katexEndColumn + 1;
+                        //     }
+                        // }
+
+                        position.startColumn = offset;
+                        // position.startOffset = parseInt(startElement.dataset.startOffset || '0') + offset;
+                    }
+                }
+                catch (error) {
                     notification.error({
-                        message: "无法从当前开始元素获取位置信息",
-                        description: "请选择其它非公式内容",
+                        message: "无法精确定位选择区域的起始位置",
+                        description: "请尝试重新选择文本",
                         placement: "bottomRight",
-                        showProgress: true,
-                        duration: 32,
+                        duration: 3,
                     });
                     return;
                 }
 
+
+                // 查找结束位置元素
                 let endElement = range.endContainer as HTMLElement;
-                // 先开始向前遍历，直到找到有data-start-line属性的元素，如果找不到，则继续向上遍历，直到mdContainer元素为止
-                while (!endElement?.dataset || !endElement?.dataset.endLine) {
-                    // while (endElement.parentElement != mdContainer) {
-                    if (endElement.previousElementSibling) {
+                // 是否在公式元素内部
+                let isEndInside = false;
+
+                // 向上查找，直到找到包含必要位置数据的元素
+                while (endElement && (!endElement.dataset || !endElement.dataset.endLine)) {
+                    // 如果存在兄弟元素并且它有位置数据，优先使用兄弟元素
+                    // if (endElement.nextElementSibling &&
+                    //     (endElement.nextElementSibling as HTMLElement).dataset?.endLine) {
+                    //     endElement = endElement.nextElementSibling as HTMLElement;
+                    //     break;
+                    // }
+
+                    if (endElement.previousElementSibling &&
+                        (endElement.previousElementSibling as HTMLElement).dataset?.endLine) {
                         endElement = endElement.previousElementSibling as HTMLElement;
-                        if (endElement?.dataset.endColumn) {
-                            position.endColumn = parseInt(endElement.dataset.endColumn || '0') + range.endOffset - 1;
-                        }
-                    } else {
-                        endElement = endElement.parentElement!;
+                        isEndInside = false;
+                        break;
+                    }
+
+                    // 继续向上查找
+                    if (!endElement.parentElement) break;
+                    endElement = endElement.parentElement;
+                    if (endElement.tagName === 'SPAN' && endElement.classList.contains('katex')) {
+                        isEndInside = true;
                     }
                 }
-                console.log('endElement=> ', endElement);
 
-                if (endElement.dataset && endElement.dataset.endLine && endElement.dataset.endColumn) {
-                    if (position.endColumn === -1) {
-                        position.endColumn = parseInt(endElement.dataset.startColumn || '0') + range.endOffset - 1;
+                console.log('找到的endElement=> ', endElement, isEndInside);
+
+                // 获取结束位置信息
+                if (endElement?.dataset?.endLine) {
+                    position.endLine = parseInt(endElement.dataset.endLine || '0');
+
+                    // 根据不同的标记类型调整列偏移
+                    let offset = 0;
+                    if (range.endContainer.nodeType === Node.TEXT_NODE) {
+                        if (isEndInside) {
+                            offset = range.endOffset;
+                        } else {
+                            // 如果选择范围在位置元素的右侧，则使用startColumn+range.endOffset
+                            offset = parseInt(endElement.dataset.startColumn || '0') + range.endOffset;
+                        }
+
+                        // 修正一个字符的偏差
+                        offset -= 1;
+
                     }
 
-                    position.endLine = parseInt(endElement.dataset.endLine || '0');
-                    // position.endColumn = parseInt(endElement.dataset.endColumn || '0') ;
-                    position.endOffset = parseInt(endElement.dataset.endOffset || '0');
+                    if (endElement.classList.contains('katex')) {
+                        // 如果结束元素是公式元素，则根据公式元素的dataset中的startColumn和endColumn来计算
+                        if (isEndInside) {
+                            offset = parseInt(endElement.dataset.endColumn || '0');
+                        } else {
+                            offset = parseInt(endElement.dataset.endColumn || '0');
+                            if (range.endContainer.nodeType === Node.TEXT_NODE) {
+                                offset += range.endOffset - 1;
+                            }
+                        }
+                        // if (range.endContainer.nodeType === Node.TEXT_NODE) {
+                        //     offset = range.endOffset;
+                        //     // 修正一个字符的偏差
+                        //     offset -= 1;
+                        // }
+                    }
+
+                    position.endColumn = offset;
+                    // position.endOffset = parseInt(endElement.dataset.endOffset || '0') + offset;
                 } else {
                     notification.error({
-                        message: "无法从当前结束元素获取位置信息",
-                        description: "请选择其它非公式内容",
+                        message: "无法精确定位选择区域的结束位置",
+                        description: "请尝试重新选择文本",
                         placement: "bottomRight",
-                        showProgress: true,
+                        duration: 3,
                     });
-                    // }
+                    return;
                 }
 
-                console.log('position=> ', position);
+                console.log('计算得到的position=> ', position);
 
                 // 设置悬浮菜单的位置
                 setMarkMenuStyle({
@@ -261,10 +338,10 @@ const SelectFloatingBox: React.FC<{
                 metaId: metaId,
                 startLine: parseInt(dataset?.startLine || '0'),
                 startColumn: parseInt(dataset?.startColumn || '0'),
-                startOffset: parseInt(dataset?.startOffset || '0'),
+                // startOffset: parseInt(dataset?.startOffset || '0'),
                 endLine: parseInt(dataset?.endLine || '0'),
                 endColumn: parseInt(dataset?.endColumn || '0'),
-                endOffset: parseInt(dataset?.endOffset || '0'),
+                // endOffset: parseInt(dataset?.endOffset || '0'),
             };
             onDeleteMark?.(deleteMarkInfo);
         }
