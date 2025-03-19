@@ -163,8 +163,9 @@ const SelectFloatingBox: React.FC<{
                             if (startElement.tagName.match(/^H[1-6]$/)) {
                                 // 针对Markdown标题的# 数量
                                 const headingLevel = parseInt(startElement.tagName.substring(1));
-                                offset += headingLevel + 1;
+                                offset += headingLevel;
                                 offset += parseInt(startElement.dataset.startColumn || '0');
+                                offset += range.startOffset;
                             } else {
                                 // 如果开始元素是段落元素与文本节点
                                 offset = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
@@ -260,6 +261,13 @@ const SelectFloatingBox: React.FC<{
                             offset = parseInt(endElement.dataset.startColumn || '0') + range.endOffset;
                         }
 
+                        // 如果结束元素是Markdown标题，则根据标题的# 数量来调整偏移
+                        if (startElement.tagName.match(/^H[1-6]$/)) {
+                            // 针对Markdown标题的# 数量
+                            const headingLevel = parseInt(startElement.tagName.substring(1)) ;
+                            offset += headingLevel +1;
+                        }
+
                         // 修正一个字符的偏差
                         offset -= 1;
 
@@ -293,6 +301,23 @@ const SelectFloatingBox: React.FC<{
                     });
                     return;
                 }
+
+
+                // 如果选择是在一行内，只是纯文本
+                if (range.startContainer == range.endContainer && range.endContainer.nodeType === Node.TEXT_NODE && startElement == endElement) {
+                    position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
+                    position.endColumn = range.endOffset;
+                    position.startLine = parseInt(startElement.dataset.startLine || '0');
+                    position.endLine = parseInt(endElement.dataset.endLine || '0');
+
+                    if (startElement.tagName.match(/^H[1-6]$/)) {
+                        // 针对Markdown标题的# 数量
+                        const headingLevel = parseInt(startElement.tagName.substring(1)) ;
+                        position.startColumn += headingLevel;
+                        position.endColumn += headingLevel +1;
+                    }
+                }
+
 
                 console.log('计算得到的position=> ', position);
 

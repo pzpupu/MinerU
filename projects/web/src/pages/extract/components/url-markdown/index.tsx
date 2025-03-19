@@ -121,7 +121,6 @@ const LazyUrlMarkdown: React.FC<IMarkdownProps> = ({
               },
               img({ node }) {
                 const { src, alt, ...rest } = node?.properties || {};
-                console.log('img=> ', node);
                 return <img {...rest} src={`/api/v2/analysis/pdf_img?as_attachment=False&pdf=${taskInfo.file_key}&filename=${alt}`} alt={`${alt}`} {...addPositionAttributes(node)} />;
               },
               a({ node, children }) {
