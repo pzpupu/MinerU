@@ -254,8 +254,9 @@ const SelectFloatingBox: React.FC<{
                     // 根据不同的标记类型调整列偏移
                     let offset = 0;
                     if (range.endContainer.nodeType === Node.TEXT_NODE) {
+                        // 如果选择范围结束在公式内部，则使用
                         if (isEndInside) {
-                            offset = range.endOffset;
+                            offset = parseInt(endElement.dataset.endColumn || '0') + range.endOffset;
                         } else {
                             // 如果选择范围在位置元素的右侧，则使用startColumn+range.endOffset
                             offset = parseInt(endElement.dataset.startColumn || '0') + range.endOffset;
@@ -305,7 +306,8 @@ const SelectFloatingBox: React.FC<{
 
                 // 如果选择是在一行内，只是纯文本
                 if (range.startContainer == range.endContainer && range.endContainer.nodeType === Node.TEXT_NODE && startElement == endElement) {
-                    position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
+                    // position.startColumn = parseInt(startElement.dataset.startColumn || '0') + range.startOffset;
+                    position.startColumn = range.startOffset;
                     position.endColumn = range.endOffset;
                     position.startLine = parseInt(startElement.dataset.startLine || '0');
                     position.endLine = parseInt(endElement.dataset.endLine || '0');
