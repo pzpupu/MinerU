@@ -142,6 +142,7 @@ const MdViewer: React.FC<IMdViewerProps> = ({
     if (taskInfo?.fullMdLink) {
       // setMdUrlArr(taskInfo?.markdownUrl);
       setFullMdLink(taskInfo?.fullMdLink);
+      setAllMdContent(taskInfo?.fullMdLink || "");
     }
     statusRef?.current?.reset();
   }, [taskInfo?.markdownUrl, params?.jobID]);
@@ -382,7 +383,14 @@ const MdViewer: React.FC<IMdViewerProps> = ({
           </span>
         </Tooltip>
         <span className="w-[1px] h-[0.75rem] bg-[#D7D8DD] ml-[1rem]"></span>
-        <Tooltip title={formatMessage({ id: "extractor.button.download" })}>
+        <Tooltip title="重置markdown">
+          <IconFont
+            type="icon-line-wrap"
+            className="text-lg text-[#464a53] leading-0  ml-[1rem] cursor-pointer hover:bg-[#F4F5F9] p-1 rounded"
+            onClick={() => {
+              setFullMdLink(taskInfo!.fullMdLink!.replace("filename=full.md", "filename=origin.md"));
+            }}
+          />
           <IconFont
             type="icon-xiazai"
             className="text-lg text-[#464a53] leading-0  ml-[1rem] cursor-pointer hover:bg-[#F4F5F9] p-1 rounded"
